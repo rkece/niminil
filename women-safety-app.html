@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Women Safety Protection System - Emergency SOS and live location sharing for women's safety">
+    <title>Women Safety Protection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #dc2626;
+            --primary-red-dark: #991b1b;
+            --primary-blue: #1e3a8a;
+            --primary-blue-dark: #1e40af;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border-color: #e2e8f0;
+            --success-green: #16a34a;
+            --warning-orange: #ea580c;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .nav-menu button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-4px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* SOS Button */
+        .sos-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .sos-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+            border: 8px solid rgba(220, 38, 38, 0.2);
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sos-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6);
+        }
+
+        .sos-button:active {
+            transform: scale(0.95);
+        }
+
+        .sos-button.active {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 30px rgba(220, 38, 38, 0);
+            }
+        }
+
+        .sos-status {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: var(--text-gray);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .status-safe {
+            background: #dcfce7;
+            color: var(--success-green);
+        }
+
+        .status-alert {
+            background: #fee2e2;
+            color: var(--primary-red);
+        }
+
+        .status-waiting {
+            background: #ffedd5;
+            color: var(--warning-orange);
+        }
+
+        /* Location Display */
+        .location-info {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .location-info p {
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .location-info strong {
+            color: var(--primary-blue);
+        }
+
+        /* Hardware Status */
+        .hardware-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success-green);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Emergency Contacts */
+        .contact-list {
+            margin-top: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: #e0e7ff;
+            transform: translateX(4px);
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .contact-phone {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .contact-actions button {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-actions button:hover {
+            background: var(--primary-red-dark);
+            transform: scale(1.05);
+        }
+
+        /* Add Contact Form */
+        .add-contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Help Centers */
+        .help-center-list {
+            margin-top: 1rem;
+        }
+
+        .help-center-item {
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .help-center-name {
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .help-center-type {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .help-center-distance {
+            font-size: 0.9rem;
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--success-green);
+        }
+
+        .toast-success .toast-icon {
+            background: #dcfce7;
+            color: var(--success-green);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--primary-red);
+        }
+
+        .toast-error .toast-icon {
+            background: #fee2e2;
+            color: var(--primary-red);
+        }
+
+        .toast-warning {
+            border-left: 4px solid var(--warning-orange);
+        }
+
+        .toast-warning .toast-icon {
+            background: #ffedd5;
+            color: var(--warning-orange);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        /* Hidden Class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sos-button {
+                width: 160px;
+                height: 160px;
+                font-size: 2rem;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .toast {
+                right: 1rem;
+                left: 1rem;
+                bottom: 1rem;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Message Preview */
+        .message-preview {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid var(--warning-orange);
+        }
+
+        .message-preview-title {
+            font-weight: 700;
+            color: var(--warning-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .message-preview-text {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <span>Women Safety Protection System</span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><button onclick="showSection('hero')">Home</button></li>
+                    <li><button onclick="showSection('dashboard')">Dashboard</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <h1>🛡️ Your Safety, Our Priority</h1>
+            <p>Advanced emergency response system with real-time location tracking, hardware integration, and instant alerts to help centers and emergency contacts.</p>
+            <button class="btn btn-primary" onclick="showSection('dashboard')" style="margin-top: 2rem;">Go to Dashboard</button>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="hidden">
+            <!-- SOS Emergency Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🚨</div>
+                    <h2 class="card-title">Emergency SOS</h2>
+                </div>
+                <div class="sos-container">
+                    <button class="sos-button" id="sosButton" onclick="triggerSOS()">
+                        SOS
+                    </button>
+                    <div class="sos-status" id="sosStatus">Press SOS button in case of emergency</div>
+                    <div class="status-badge status-safe" id="statusBadge">Safe</div>
+                    <div id="locationDisplay" class="hidden"></div>
+                </div>
+            </div>
+
+            <!-- Grid Layout for Other Cards -->
+            <div class="grid" style="margin-top: 2rem;">
+                <!-- Hardware Device Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--success-green) 0%, #15803d 100%);">⌚</div>
+                        <h2 class="card-title">Hardware Device</h2>
+                    </div>
+                    <div class="hardware-status">
+                        <div class="status-indicator"></div>
+                        <div>
+                            <div style="font-weight: 600;">Device Connected</div>
+                            <div style="font-size: 0.85rem; color: var(--text-gray);">ESP32 Panic Button Active</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" onclick="simulateHardwarePanic()" style="width: 100%; margin-top: 1rem;">
+                        Simulate Hardware Panic
+                    </button>
+                </div>
+
+                <!-- Live Location -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">📍</div>
+                        <h2 class="card-title">Live Location</h2>
+                    </div>
+                    <div id="currentLocation">
+                        <p style="color: var(--text-gray);">Location will be fetched when SOS is triggered</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="fetchLocation()" style="width: 100%; margin-top: 1rem;">
+                        Fetch Current Location
+                    </button>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts -->
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">📞</div>
+                    <h2 class="card-title">Emergency Contacts</h2>
+                </div>
+                <div class="contact-list" id="contactList">
+                    <!-- Contacts will be dynamically added here -->
+                </div>
+                <div class="add-contact-form">
+                    <div class="form-group">
+                        <label for="contactName">Contact Name</label>
+                        <input type="text" id="contactName" placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactPhone">Phone Number</label>
+                        <input type="tel" id="contactPhone" placeholder="Enter phone number">
+                    </div>
+                    <button class="btn btn-primary" onclick="addContact()">Add Contact</button>
+                </div>
+                <div class="message-preview">
+                    <div class="message-preview-title">📱 Message Preview</div>
+                    <div class="message-preview-text" id="messagePreview">
+                        "I'm in danger. My location is: [GPS coordinates will be inserted here]"
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nearby Help Centers -->
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);">🏥</div>
+                    <h2 class="card-title">Nearby Help Centers</h2>
+                </div>
+                <div class="help-center-list" id="helpCenterList">
+                    <!-- Help centers will be dynamically populated -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-icon" id="toastIcon"></div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle"></div>
+            <div class="toast-message" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        const appState = {
+            currentLocation: null,
+            emergencyContacts: [],
+            sosActive: false,
+            helpCenters: [
+                { name: "City Police Station", type: "Police", distance: "0.8 km", phone: "100" },
+                { name: "Women's Helpline", type: "NGO", distance: "1.2 km", phone: "1091" },
+                { name: "City General Hospital", type: "Hospital", distance: "1.5 km", phone: "108" },
+                { name: "Women Safety Cell", type: "Police", distance: "2.1 km", phone: "1091" },
+                { name: "Emergency Medical Services", type: "Hospital", distance: "2.3 km", phone: "102" }
+            ]
+        };
+
+        // Initialize Application
+        function initApp() {
+            renderHelpCenters();
+            renderContacts();
+            
+            // Simulate WebSocket connection for hardware device
+            simulateWebSocketConnection();
+        }
+
+        // Section Navigation
+        function showSection(sectionId) {
+            document.getElementById('hero').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Toast Notification System
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+
+            // Remove previous type classes
+            toast.classList.remove('toast-success', 'toast-error', 'toast-warning');
+            
+            // Add new type class
+            toast.classList.add(`toast-${type}`);
+
+            // Set icon based on type
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠'
+            };
+            toastIcon.textContent = icons[type] || '✓';
+
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // Geolocation - Fetch Current Location
+        function fetchLocation() {
+            if (!navigator.geolocation) {
+                showToast('Error', 'Geolocation is not supported by your browser', 'error');
+                return;
+            }
+
+            showToast('Fetching Location', 'Getting your current location...', 'warning');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    appState.currentLocation = { latitude, longitude };
+                    
+                    displayLocation(latitude, longitude);
+                    showToast('Success', 'Location fetched successfully', 'success');
+                },
+                (error) => {
+                    showToast('Error', 'Unable to fetch location. Please enable GPS.', 'error');
+                    console.error('Geolocation error:', error);
+                }
+            );
+        }
+
+        // Display Location
+        function displayLocation(lat, lng) {
+            const locationHTML = `
+                <div class="location-info">
+                    <p><strong>Latitude:</strong> ${lat.toFixed(6)}</p>
+                    <p><strong>Longitude:</strong> ${lng.toFixed(6)}</p>
+                    <p style="color: var(--success-green); font-weight: 600; margin-top: 0.5rem;">✓ Location fetched successfully</p>
+                </div>
+            `;
+            document.getElementById('currentLocation').innerHTML = locationHTML;
+        }
+
+        // SOS Emergency Trigger
+        async function triggerSOS() {
+            if (appState.sosActive) {
+                showToast('Alert', 'SOS already active!', 'warning');
+                return;
+            }
+
+            appState.sosActive = true;
+            const sosButton = document.getElementById('sosButton');
+            const sosStatus = document.getElementById('sosStatus');
+            const statusBadge = document.getElementById('statusBadge');
+            const locationDisplay = document.getElementById('locationDisplay');
+
+            // Update UI
+            sosButton.classList.add('active');
+            statusBadge.className = 'status-badge status-alert';
+            statusBadge.textContent = 'ALERT SENT';
+            sosStatus.innerHTML = '<div class="spinner"></div><p>Activating emergency protocol...</p>';
+
+            showToast('SOS Activated', 'Emergency alert triggered!', 'error');
+
+            // Fetch location
+            if (!appState.currentLocation) {
+                await new Promise((resolve) => {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const { latitude, longitude } = position.coords;
+                            appState.currentLocation = { latitude, longitude };
+                            resolve();
+                        },
+                        () => {
+                            appState.currentLocation = { latitude: 0, longitude: 0 };
+                            resolve();
+                        }
+                    );
+                });
+            }
+
+            // Simulate sending data to server
+            setTimeout(() => {
+                sendSOSToServer();
+                alertHelpCenters();
+                alertEmergencyContacts();
+                
+                const { latitude, longitude } = appState.currentLocation;
+                locationDisplay.innerHTML = `
+                    <div class="location-info">
+                        <p><strong>📍 Your Location:</strong></p>
+                        <p><strong>Latitude:</strong> ${latitude.toFixed(6)}</p>
+                        <p><strong>Longitude:</strong> ${longitude.toFixed(6)}</p>
+                        <p style="color: var(--success-green); font-weight: 600; margin-top: 0.5rem;">✓ Location shared with help centers</p>
+                    </div>
+                `;
+                locationDisplay.classList.remove('hidden');
+
+                sosStatus.innerHTML = `
+                    <p style="color: var(--success-green); font-weight: 600;">✓ Alert sent successfully</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Help is on the way!</p>
+                `;
+
+                statusBadge.className = 'status-badge status-waiting';
+                statusBadge.textContent = 'WAITING FOR HELP';
+
+                showToast('Help Contacted', 'Emergency services and contacts have been notified', 'success');
+            }, 2000);
+        }
+
+        // Send SOS to Server (Mock API)
+        function sendSOSToServer() {
+            const data = {
+                type: 'SOS',
+                location: appState.currentLocation,
+                timestamp: new Date().toISOString(),
+                userId: 'user_' + Math.random().toString(36).substr(2, 9)
+            };
+
+            // Mock fetch to server
+            fetch('https://api.womensafety.example.com/emergency', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).catch(() => {
+                console.log('Mock API call - SOS data sent:', data);
+            });
+        }
+
+        // Alert Help Centers
+        function alertHelpCenters() {
+            appState.helpCenters.forEach((center, index) => {
+                setTimeout(() => {
+                    showToast('Help Center Alerted', `${center.name} has been notified`, 'success');
+                }, 1000 * (index + 1));
+            });
+        }
+
+        // Alert Emergency Contacts
+        function alertEmergencyContacts() {
+            if (appState.emergencyContacts.length === 0) {
+                showToast('No Contacts', 'No emergency contacts added yet', 'warning');
+                return;
+            }
+
+            const { latitude, longitude } = appState.currentLocation;
+            const message = `I'm in danger. My location is: Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`;
+
+            appState.emergencyContacts.forEach((contact, index) => {
+                setTimeout(() => {
+                    showToast('Contact Alerted', `Message sent to ${contact.name}`, 'success');
+                    console.log(`SMS to ${contact.phone}: ${message}`);
+                }, 2000 + (500 * index));
+            });
+
+            // Update message preview
+            document.getElementById('messagePreview').textContent = message;
+        }
+
+        // Hardware Panic Button Simulation
+        function simulateHardwarePanic() {
+            showToast('Hardware Alert', 'Panic button pressed on hardware device!', 'error');
+            setTimeout(() => {
+                triggerSOS();
+            }, 500);
+        }
+
+        // WebSocket Simulation for Hardware
+        function simulateWebSocketConnection() {
+            console.log('WebSocket connection established with hardware device');
+            
+            // Simulate periodic status check
+            setInterval(() => {
+                console.log('Hardware device status: Connected');
+            }, 30000); // Every 30 seconds
+        }
+
+        // Emergency Contacts Management
+        function addContact() {
+            const nameInput = document.getElementById('contactName');
+            const phoneInput = document.getElementById('contactPhone');
+
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+
+            if (!name || !phone) {
+                showToast('Error', 'Please fill in all contact details', 'error');
+                return;
+            }
+
+            if (appState.emergencyContacts.length >= 3) {
+                showToast('Limit Reached', 'Maximum 3 emergency contacts allowed', 'warning');
+                return;
+            }
+
+            const contact = {
+                id: Date.now(),
+                name,
+                phone
+            };
+
+            appState.emergencyContacts.push(contact);
+            renderContacts();
+
+            nameInput.value = '';
+            phoneInput.value = '';
+
+            showToast('Contact Added', `${name} added to emergency contacts`, 'success');
+        }
+
+        function removeContact(id) {
+            appState.emergencyContacts = appState.emergencyContacts.filter(c => c.id !== id);
+            renderContacts();
+            showToast('Contact Removed', 'Emergency contact removed', 'success');
+        }
+
+        function renderContacts() {
+            const contactList = document.getElementById('contactList');
+            
+            if (appState.emergencyContacts.length === 0) {
+                contactList.innerHTML = '<p style="color: var(--text-gray); text-align: center; padding: 1rem;">No emergency contacts added yet. Add up to 3 contacts.</p>';
+                return;
+            }
+
+            contactList.innerHTML = appState.emergencyContacts.map(contact => `
+                <div class="contact-item">
+                    <div class="contact-info">
+                        <div class="contact-name">👤 ${contact.name}</div>
+                        <div class="contact-phone">📱 ${contact.phone}</div>
+                    </div>
+                    <div class="contact-actions">
+                        <button onclick="removeContact(${contact.id})">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Help Centers
+        function renderHelpCenters() {
+            const helpCenterList = document.getElementById('helpCenterList');
+            
+            helpCenterList.innerHTML = appState.helpCenters.map(center => `
+                <div class="help-center-item">
+                    <div class="help-center-name">${center.name}</div>
+                    <div class="help-center-type">📍 ${center.type} • 📞 ${center.phone}</div>
+                    <div class="help-center-distance">Distance: ${center.distance}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize app on load
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

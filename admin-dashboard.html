@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Admin Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #13131a;
+            --bg-sidebar: #0d0d12;
+            --accent-pink: #ff3366;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --border: #1f1f28;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            animation: float 25s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-pink), transparent);
+            top: -15%;
+            left: -15%;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-purple), transparent);
+            top: 40%;
+            right: -15%;
+            animation-delay: 7s;
+        }
+
+        .orb-3 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--accent-blue), transparent);
+            bottom: -25%;
+            left: 25%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(60px, -60px) scale(1.15);
+            }
+
+            66% {
+                transform: translate(-60px, 60px) scale(0.85);
+            }
+        }
+
+        /* Layout */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo p {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--accent-pink);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-title h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title p {
+            color: var(--text-gray);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .admin-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), rgba(168, 85, 247, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-pink);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+        }
+
+        .trend-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .table-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .search-box {
+            padding: 0.75rem 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-white);
+            width: 300px;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-emergency {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-resolved {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-orange);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 51, 102, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-action {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Map Container */
+        .map-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .chart-header {
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-subtitle {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-gray);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--accent-pink);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            min-width: 350px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: translateX(500px);
+            transition: transform 0.5s;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>🛡️ Guardian</h1>
+                <p>Admin Dashboard</p>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" onclick="showSection('overview')">
+                            <span class="nav-icon">📊</span>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('emergencies')">
+                            <span class="nav-icon">🚨</span>
+                            <span>Active Emergencies</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('users')">
+                            <span class="nav-icon">👥</span>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('map')">
+                            <span class="nav-icon">🗺️</span>
+                            <span>Live Map</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('analytics')">
+                            <span class="nav-icon">📈</span>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('help-centers')">
+                            <span class="nav-icon">🏥</span>
+                            <span>Help Centers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('settings')">
+                            <span class="nav-icon">⚙️</span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageSubtitle">Monitor and manage women safety system</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showModal('addUser')">+ Add User</button>
+                    <div class="admin-profile">
+                        <div class="admin-avatar">👨‍💼</div>
+                        <div>
+                            <div style="font-weight: 600;">Admin User</div>
+                            <div style="font-size: 0.75rem; color: var(--text-gray);">admin@guardian.com</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section id="overview">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalUsers">1,247</div>
+                                <div class="stat-label">Total Users</div>
+                                <div class="stat-trend trend-up">↑ 12% this month</div>
+                            </div>
+                            <div class="stat-icon"
+                                style="background: linear-gradient(135deg, var(--accent-blue), #2563eb);">👥</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="activeEmergencies" style="color: var(--accent-pink);">8
+                                </div>
+                                <div class="stat-label">Active Emergencies</div>
+                                <div class="stat-trend trend-down">↓ 5% from yesterday</div>
+                            </div>
+                            <div class="stat-icon"
+                                style="background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);">🚨</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="resolvedToday">23</div>
+                                <div class="stat-label">Resolved Today</div>
+                                <div class="stat-trend trend-up">↑ 18% from yesterday</div>
+                            </div>
+                            <div class="stat-icon"
+                                style="background: linear-gradient(135deg, var(--accent-green), #059669);">✓</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="avgResponseTime">2.3<span
+                                        style="font-size: 1rem;">min</span></div>
+                                <div class="stat-label">Avg Response Time</div>
+                                <div class="stat-trend trend-up">↑ 15% faster</div>
+                            </div>
+                            <div class="stat-icon"
+                                style="background: linear-gradient(135deg, var(--accent-orange), #d97706);">⏱️</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Emergencies -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">Recent Emergencies</h2>
+                        <input type="text" class="search-box" placeholder="Search emergencies..."
+                            onkeyup="searchTable(this.value, 'emergenciesTable')">
+                    </div>
+                    <table id="emergenciesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Location</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emergenciesTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Emergencies Section -->
+            <section id="emergencies" class="hidden">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">Active Emergencies</h2>
+                        <button class="btn btn-primary" onclick="refreshEmergencies()">🔄 Refresh</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Location</th>
+                                <th>Coordinates</th>
+                                <th>Time</th>
+                                <th>Priority</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activeEmergenciesBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="hidden">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">All Users</h2>
+                        <input type="text" class="search-box" placeholder="Search users..."
+                            onkeyup="searchTable(this.value, 'usersTable')">
+                    </div>
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Map Section -->
+            <section id="map" class="hidden">
+                <div class="map-container">
+                    <div style="text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🗺️</div>
+                        <h3 style="color: var(--text-white); margin-bottom: 0.5rem;">Live Emergency Map</h3>
+                        <p>Real-time tracking of active emergencies</p>
+                        <p style="margin-top: 1rem; font-size: 0.875rem;">Integrate with Google Maps API or Mapbox</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="hidden">
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Emergency Trends</h3>
+                            <p class="chart-subtitle">Last 30 days</p>
+                        </div>
+                        <div class="chart-placeholder">
+                            📈 Line Chart - Emergency count over time
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Response Time</h3>
+                            <p class="chart-subtitle">Average response metrics</p>
+                        </div>
+                        <div class="chart-placeholder">
+                            📊 Bar Chart - Response time by hour
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Emergency Types</h3>
+                            <p class="chart-subtitle">Distribution by category</p>
+                        </div>
+                        <div class="chart-placeholder">
+                            🥧 Pie Chart - Emergency categories
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">User Growth</h3>
+                            <p class="chart-subtitle">Monthly registration</p>
+                        </div>
+                        <div class="chart-placeholder">
+                            📈 Area Chart - User growth
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Help Centers Section -->
+            <section id="help-centers" class="hidden">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">Help Centers</h2>
+                        <button class="btn btn-primary" onclick="showModal('addHelpCenter')">+ Add Help Center</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="helpCentersBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="hidden">
+                <div class="table-container">
+                    <h2 class="table-title" style="margin-bottom: 2rem;">System Settings</h2>
+
+                    <div class="form-group">
+                        <label class="form-label">Emergency Response Timeout (minutes)</label>
+                        <input type="number" class="form-input" value="5" placeholder="5">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Auto-Alert Radius (km)</label>
+                        <input type="number" class="form-input" value="10" placeholder="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SMS Provider</label>
+                        <select class="form-select">
+                            <option>Twilio</option>
+                            <option>AWS SNS</option>
+                            <option>Firebase Cloud Messaging</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Notifications</label>
+                        <select class="form-select">
+                            <option>Enabled</option>
+                            <option>Disabled</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary">Save Settings</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Add User</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div style="font-weight: 700;" id="toastTitle">Success</div>
+        <div style="color: var(--text-gray); font-size: 0.875rem;" id="toastMessage">Operation completed</div>
+    </div>
+
+    <script>
+        // Mock Data
+        const mockEmergencies = [
+            { id: 'EMG-001', user: 'Sarah Johnson', location: 'Downtown Area', lat: 28.6139, lng: 77.2090, time: '2 mins ago', status: 'emergency', priority: 'HIGH' },
+            { id: 'EMG-002', user: 'Emily Davis', location: 'Park Street', lat: 28.6129, lng: 77.2295, time: '5 mins ago', status: 'emergency', priority: 'CRITICAL' },
+            { id: 'EMG-003', user: 'Jessica Brown', location: 'Mall Road', lat: 28.7041, lng: 77.1025, time: '12 mins ago', status: 'pending', priority: 'MEDIUM' },
+            { id: 'EMG-004', user: 'Amanda Wilson', location: 'Station Road', lat: 28.5355, lng: 77.3910, time: '1 hour ago', status: 'resolved', priority: 'LOW' },
+            { id: 'EMG-005', user: 'Michelle Lee', location: 'Market Square', lat: 28.4595, lng: 77.0266, time: '2 hours ago', status: 'resolved', priority: 'MEDIUM' }
+        ];
+
+        const mockUsers = [
+            { id: 'USR-001', name: 'Sarah Johnson', email: 'sarah.j@email.com', phone: '+1-555-0101', registered: '2024-01-15', status: 'active' },
+            { id: 'USR-002', name: 'Emily Davis', email: 'emily.d@email.com', phone: '+1-555-0102', registered: '2024-01-20', status: 'active' },
+            { id: 'USR-003', name: 'Jessica Brown', email: 'jessica.b@email.com', phone: '+1-555-0103', registered: '2024-02-01', status: 'active' },
+            { id: 'USR-004', name: 'Amanda Wilson', email: 'amanda.w@email.com', phone: '+1-555-0104', registered: '2024-02-10', status: 'active' },
+            { id: 'USR-005', name: 'Michelle Lee', email: 'michelle.l@email.com', phone: '+1-555-0105', registered: '2024-02-15', status: 'active' }
+        ];
+
+        const mockHelpCenters = [
+            { name: 'City Police Station', type: 'Police', location: 'Central District', phone: '100', status: 'active' },
+            { name: 'Women\'s Helpline', type: 'NGO', location: 'North Zone', phone: '1091', status: 'active' },
+            { name: 'City General Hospital', type: 'Hospital', location: 'Medical District', phone: '108', status: 'active' },
+            { name: 'Women Safety Cell', type: 'Police', location: 'South Zone', phone: '1091', status: 'active' }
+        ];
+
+        // Initialize
+        function init() {
+            renderEmergencies();
+            renderUsers();
+            renderHelpCenters();
+        }
+
+        // Show Section
+        function showSection(section) {
+            document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(section).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.closest('.nav-link').classList.add('active');
+
+            const titles = {
+                overview: 'Dashboard Overview',
+                emergencies: 'Active Emergencies',
+                users: 'User Management',
+                map: 'Live Emergency Map',
+                analytics: 'Analytics & Reports',
+                'help-centers': 'Help Centers',
+                settings: 'System Settings'
+            };
+
+            document.getElementById('pageTitle').textContent = titles[section];
+        }
+
+        // Render Tables
+        function renderEmergencies() {
+            const tbody = document.getElementById('emergenciesTableBody');
+            tbody.innerHTML = mockEmergencies.map(e => `
+                <tr>
+                    <td><strong>${e.id}</strong></td>
+                    <td>${e.user}</td>
+                    <td>${e.location}</td>
+                    <td>${e.time}</td>
+                    <td><span class="status-badge status-${e.status}">${e.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-action" onclick="viewDetails('${e.id}')">View</button>
+                        <button class="btn btn-primary btn-action" onclick="resolveEmergency('${e.id}')">Resolve</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            const activeBody = document.getElementById('activeEmergenciesBody');
+            if (activeBody) {
+                activeBody.innerHTML = mockEmergencies.filter(e => e.status === 'emergency').map(e => `
+                    <tr>
+                        <td><strong>${e.id}</strong></td>
+                        <td>${e.user}</td>
+                        <td>${e.location}</td>
+                        <td>${e.lat.toFixed(4)}, ${e.lng.toFixed(4)}</td>
+                        <td>${e.time}</td>
+                        <td><span class="status-badge status-emergency">${e.priority}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-action" onclick="dispatchHelp('${e.id}')">Dispatch</button>
+                            <button class="btn btn-secondary btn-action" onclick="viewOnMap('${e.id}')">Map</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = mockUsers.map(u => `
+                <tr>
+                    <td><strong>${u.id}</strong></td>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td>${u.phone}</td>
+                    <td>${u.registered}</td>
+                    <td><span class="status-badge status-${u.status}">${u.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-action" onclick="editUser('${u.id}')">Edit</button>
+                        <button class="btn btn-secondary btn-action" onclick="viewUserHistory('${u.id}')">History</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderHelpCenters() {
+            const tbody = document.getElementById('helpCentersBody');
+            tbody.innerHTML = mockHelpCenters.map(h => `
+                <tr>
+                    <td><strong>${h.name}</strong></td>
+                    <td>${h.type}</td>
+                    <td>${h.location}</td>
+                    <td>${h.phone}</td>
+                    <td><span class="status-badge status-${h.status}">${h.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-action" onclick="editHelpCenter('${h.name}')">Edit</button>
+                        <button class="btn btn-secondary btn-action" onclick="deleteHelpCenter('${h.name}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search
+        function searchTable(query, tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+            }
+        }
+
+        // Actions
+        function viewDetails(id) {
+            showToast('Viewing Details', `Opening details for ${id}`, 'success');
+        }
+
+        function resolveEmergency(id) {
+            showToast('Emergency Resolved', `${id} marked as resolved`, 'success');
+        }
+
+        function dispatchHelp(id) {
+            showToast('Help Dispatched', `Emergency services dispatched for ${id}`, 'success');
+        }
+
+        function viewOnMap(id) {
+            showSection('map');
+            showToast('Map View', `Showing ${id} on map`, 'success');
+        }
+
+        function refreshEmergencies() {
+            showToast('Refreshed', 'Emergency data updated', 'success');
+        }
+
+        // Modal
+        function showModal(type) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            if (type === 'addUser') {
+                modalTitle.textContent = 'Add New User';
+                modalBody.innerHTML = `
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" placeholder="Enter phone">
+                    </div>
+                    <button class="btn btn-primary" onclick="closeModal(); showToast('User Added', 'New user created successfully', 'success')">Add User</button>
+                `;
+            } else if (type === 'addHelpCenter') {
+                modalTitle.textContent = 'Add Help Center';
+                modalBody.innerHTML = `
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-input" placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select class="form-select">
+                            <option>Police</option>
+                            <option>Hospital</option>
+                            <option>NGO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-input" placeholder="Enter location">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" placeholder="Enter phone">
+                    </div>
+                    <button class="btn btn-primary" onclick="closeModal(); showToast('Help Center Added', 'New help center created', 'success')">Add Help Center</button>
+                `;
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        // Toast
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = `toast toast-${type} show`;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

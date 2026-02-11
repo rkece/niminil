@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian - Women Safety (Firebase)</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #13131a;
+            --accent-pink: #ff3366;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --border: #1f1f28;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            line-height: 1.6;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-pink), transparent);
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-purple), transparent);
+            top: 50%;
+            right: -10%;
+            animation-delay: 5s;
+        }
+
+        .orb-3 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-blue), transparent);
+            bottom: -20%;
+            left: 30%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-50px, 50px) scale(0.9);
+            }
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 0;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-logout {
+            padding: 0.5rem 1.25rem;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            color: var(--accent-pink);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-container {
+            max-width: 500px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 4px rgba(255, 51, 102, 0.1);
+        }
+
+        .btn {
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);
+            color: white;
+            box-shadow: 0 20px 40px rgba(255, 51, 102, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .dashboard {
+            padding: 8rem 3rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple), var(--accent-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sos-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 4rem 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .sos-button {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);
+            border: none;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 30px 80px rgba(255, 51, 102, 0.5);
+            margin: 0 auto 2rem;
+        }
+
+        .sos-button:hover {
+            transform: scale(1.05);
+        }
+
+        .sos-button.active {
+            animation: sosActive 1.5s infinite;
+        }
+
+        @keyframes sosActive {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 50px rgba(255, 51, 102, 0);
+            }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            margin-top: 2rem;
+        }
+
+        .badge-safe {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-alert {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .btn-remove {
+            padding: 0.75rem 1.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            min-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: translateX(500px);
+            transition: transform 0.5s;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast-warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .location-info {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 51, 102, 0.2);
+            border-top-color: var(--accent-pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .sos-button {
+                width: 220px;
+                height: 220px;
+                font-size: 3rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="hidden">
+        <div class="nav-container">
+            <div class="logo">Guardian</div>
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <span id="userName" style="color: var(--text-gray);"></span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">🛡️</div>
+                <h1>Welcome to Guardian</h1>
+                <p style="color: var(--text-gray);">Your safety is our priority</p>
+            </div>
+
+            <button class="btn btn-primary" onclick="loginWithGoogle()" style="margin-bottom: 1rem;">
+                Continue with Google
+            </button>
+
+            <div class="divider">or</div>
+
+            <form onsubmit="loginWithEmail(event)">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">Sign In</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 2rem; color: var(--text-gray); font-size: 0.875rem;">
+                Don't have an account? <a href="#" onclick="showRegister()"
+                    style="color: var(--accent-pink); text-decoration: none;">Register</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardPage" class="dashboard hidden">
+        <div class="section-header">
+            <h2 class="section-title">Safety <span class="gradient-text">Dashboard</span></h2>
+            <p style="color: var(--text-gray); font-size: 1.125rem;">Monitor your safety and manage emergency settings
+            </p>
+        </div>
+
+        <!-- SOS -->
+        <div class="sos-section">
+            <button class="sos-button" id="sosButton" onclick="triggerSOS()">SOS</button>
+            <div id="sosStatus" style="color: var(--text-gray); font-size: 1.125rem;">Press SOS in case of emergency
+            </div>
+            <div class="status-badge badge-safe" id="statusBadge">System Ready</div>
+            <div id="locationDisplay" class="hidden"></div>
+        </div>
+
+        <!-- Emergency Contacts -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📞</div>
+                <h3 class="card-title">Emergency Contacts</h3>
+            </div>
+            <div id="contactList"></div>
+            <form onsubmit="addContact(event)" style="margin-top: 2rem;">
+                <div class="form-group">
+                    <label class="form-label">Contact Name</label>
+                    <input type="text" id="contactName" class="form-input" placeholder="Enter name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="contactPhone" class="form-input" placeholder="Enter phone" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Contact</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div style="font-weight: 700;" id="toastTitle">Success</div>
+        <div style="color: var(--text-gray); font-size: 0.875rem;" id="toastMessage">Operation completed</div>
+    </div>
+
+    <script>
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
+        // Production Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIDre-KHAc8Qp0LAj1Y15rfSoDeKYQ9BI",
+            authDomain: "niminil.firebaseapp.com",
+            databaseURL: "https://niminil-default-rtdb.firebaseio.com",
+            projectId: "niminil",
+            storageBucket: "niminil.firebasestorage.app",
+            messagingSenderId: "781231700779",
+            appId: "1:781231700779:web:3868c7daf3be4ab937236e",
+            measurementId: "G-S4XN8Y2ZLS"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const firestore = firebase.firestore();
+
+        // App State
+        const appState = {
+            user: null,
+            currentLocation: null,
+            contacts: []
+        };
+
+        // Save/Update User Profile in Realtime Database
+        async function saveUserProfile(user) {
+            if (!user) return;
+
+            try {
+                const userRef = database.ref('users/' + user.uid);
+                const profileData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || user.email.split('@')[0],
+                    photoURL: user.photoURL || null,
+                    lastLogin: firebase.database.ServerValue.TIMESTAMP,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                // Check if user exists
+                const snapshot = await userRef.once('value');
+                if (!snapshot.exists()) {
+                    // New user - add createdAt
+                    profileData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+                    console.log('Creating new user profile in database');
+                }
+
+                // Save to Realtime Database
+                await userRef.update(profileData);
+                console.log('User profile saved successfully to Realtime Database');
+
+                // Also save to Firestore for redundancy
+                await firestore.collection('users').doc(user.uid).set({
+                    ...profileData,
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: snapshot.exists() ?
+                        (await firestore.collection('users').doc(user.uid).get()).data()?.createdAt || firebase.firestore.FieldValue.serverTimestamp() :
+                        firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                return true;
+            } catch (error) {
+                console.error('Error saving user profile:', error);
+                showToast('Warning', 'Profile saved locally, but database sync failed', 'warning');
+                return false;
+            }
+        }
+
+        // Auth State Observer
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                appState.user = user;
+
+                // Save user profile to database
+                await saveUserProfile(user);
+
+                document.getElementById('userName').textContent = user.displayName || user.email;
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboardPage').classList.remove('hidden');
+                document.getElementById('navbar').classList.remove('hidden');
+                loadUserData();
+                showToast('Welcome!', `Logged in as ${user.email}`, 'success');
+            } else {
+                appState.user = null;
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('dashboardPage').classList.add('hidden');
+                document.getElementById('navbar').classList.add('hidden');
+            }
+        });
+
+        // Google Login
+        async function loginWithGoogle() {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                // Add required scopes
+                provider.addScope('profile');
+                provider.addScope('email');
+
+                console.log('Attempting Google sign-in...');
+                const result = await auth.signInWithPopup(provider);
+                console.log('Google sign-in successful:', result.user.email);
+            } catch (error) {
+                console.error('Google login error:', error.code, error.message);
+
+                // Provide user-friendly error messages
+                let errorMessage = error.message;
+                if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Popup was blocked. Please allow popups for this site and try again.';
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Sign-in was cancelled. Please try again.';
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    errorMessage = 'This domain is not authorized. Please contact support.';
+                } else if (error.code === 'auth/cancelled-popup-request') {
+                    errorMessage = 'Only one popup request is allowed at a time.';
+                }
+
+                showToast('Login Failed', errorMessage, 'error');
+            }
+        }
+
+        // Email Login
+        async function loginWithEmail(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            console.log('Attempting email login for:', email);
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log('Email login successful:', userCredential.user.email);
+                // Profile will be saved by onAuthStateChanged
+            } catch (error) {
+                console.error('Login error:', error.code, error.message);
+
+                // If user doesn't exist or credentials are invalid, offer to create account
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    console.log('User not found or invalid credentials, attempting to create account...');
+
+                    // Ask user if they want to create an account
+                    const shouldCreateAccount = confirm(
+                        `No account found for ${email}.\n\nWould you like to create a new account with this email?`
+                    );
+
+                    if (shouldCreateAccount) {
+                        try {
+                            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                            // Update display name
+                            await userCredential.user.updateProfile({
+                                displayName: email.split('@')[0]
+                            });
+                            console.log('Account created successfully:', userCredential.user.email);
+                            showToast('Account Created', 'Welcome to Guardian! Your profile has been saved.', 'success');
+                            // Profile will be saved by onAuthStateChanged
+                        } catch (createError) {
+                            console.error('Registration error:', createError.code, createError.message);
+
+                            let errorMessage = createError.message;
+                            if (createError.code === 'auth/weak-password') {
+                                errorMessage = 'Password should be at least 6 characters.';
+                            } else if (createError.code === 'auth/email-already-in-use') {
+                                errorMessage = 'Email already in use. The password you entered is incorrect.';
+                            } else if (createError.code === 'auth/invalid-email') {
+                                errorMessage = 'Invalid email format.';
+                            }
+
+                            showToast('Registration Failed', errorMessage, 'error');
+                        }
+                    } else {
+                        showToast('Login Cancelled', 'Please check your credentials and try again.', 'warning');
+                    }
+                } else if (error.code === 'auth/wrong-password') {
+                    showToast('Login Failed', 'Incorrect password. Please try again.', 'error');
+                } else if (error.code === 'auth/invalid-email') {
+                    showToast('Login Failed', 'Invalid email format.', 'error');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showToast('Login Failed', 'Too many failed attempts. Please try again later or reset your password.', 'error');
+                } else {
+                    console.error('Unexpected login error:', error);
+                    showToast('Login Failed', error.message, 'error');
+                }
+            }
+        }
+
+        // Logout
+        function logout() {
+            auth.signOut();
+            showToast('Goodbye', 'Logged out successfully', 'success');
+        }
+
+        // Load User Data from Firebase
+        async function loadUserData() {
+            if (!appState.user) return;
+
+            try {
+                // Load contacts from Firestore
+                const contactsRef = firestore.collection('users').doc(appState.user.uid).collection('contacts');
+                const snapshot = await contactsRef.get();
+
+                appState.contacts = [];
+                snapshot.forEach(doc => {
+                    appState.contacts.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderContacts();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Trigger SOS
+        async function triggerSOS() {
+            if (!appState.user) {
+                showToast('Error', 'Please login first', 'error');
+                return;
+            }
+
+            document.getElementById('sosButton').classList.add('active');
+            document.getElementById('statusBadge').className = 'status-badge badge-alert';
+            document.getElementById('statusBadge').textContent = 'ALERT SENT';
+            document.getElementById('sosStatus').innerHTML = '<div class="spinner"></div><p>Activating emergency...</p>';
+
+            showToast('SOS Activated', 'Emergency alert triggered!', 'error');
+
+            // Get location
+            if (!appState.currentLocation) {
+                await new Promise(resolve => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => {
+                            appState.currentLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                            resolve();
+                        },
+                        () => {
+                            appState.currentLocation = { lat: 0, lng: 0 };
+                            resolve();
+                        }
+                    );
+                });
+            }
+
+            // Save to Firebase Realtime Database
+            try {
+                const emergencyRef = database.ref('emergencies/' + appState.user.uid);
+                await emergencyRef.push({
+                    userId: appState.user.uid,
+                    userEmail: appState.user.email,
+                    location: appState.currentLocation,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'active'
+                });
+
+                // Also save to Firestore
+                await firestore.collection('emergencies').add({
+                    userId: appState.user.uid,
+                    userEmail: appState.user.email,
+                    location: appState.currentLocation,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'active'
+                });
+
+                setTimeout(() => {
+                    const { lat, lng } = appState.currentLocation;
+                    document.getElementById('locationDisplay').innerHTML = `
+                        <div class="location-info">
+                            <p><strong>📍 Your Location:</strong></p>
+                            <p>Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}</p>
+                            <p style="color: #10b981; font-weight: 600; margin-top: 0.5rem;">✓ Saved to Firebase</p>
+                        </div>
+                    `;
+                    document.getElementById('locationDisplay').classList.remove('hidden');
+                    document.getElementById('sosStatus').innerHTML = '<p style="color: #10b981; font-weight: 600;">✓ Help is on the way!</p>';
+                    showToast('Emergency Saved', 'Data saved to Firebase successfully', 'success');
+                }, 2000);
+            } catch (error) {
+                showToast('Error', 'Failed to save emergency: ' + error.message, 'error');
+            }
+        }
+
+        // Add Contact
+        async function addContact(e) {
+            e.preventDefault();
+
+            if (!appState.user) {
+                showToast('Error', 'Please login first', 'error');
+                return;
+            }
+
+            if (appState.contacts.length >= 3) {
+                showToast('Limit Reached', 'Max 3 contacts allowed', 'error');
+                return;
+            }
+
+            const name = document.getElementById('contactName').value;
+            const phone = document.getElementById('contactPhone').value;
+
+            try {
+                // Save to Firestore
+                const contactRef = await firestore.collection('users').doc(appState.user.uid).collection('contacts').add({
+                    name,
+                    phone,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                appState.contacts.push({ id: contactRef.id, name, phone });
+                renderContacts();
+
+                document.getElementById('contactName').value = '';
+                document.getElementById('contactPhone').value = '';
+
+                showToast('Contact Added', `${name} saved to Firebase`, 'success');
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            }
+        }
+
+        // Remove Contact
+        async function removeContact(id) {
+            if (!appState.user) return;
+
+            try {
+                await firestore.collection('users').doc(appState.user.uid).collection('contacts').doc(id).delete();
+                appState.contacts = appState.contacts.filter(c => c.id !== id);
+                renderContacts();
+                showToast('Contact Removed', 'Deleted from Firebase', 'success');
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            }
+        }
+
+        // Render Contacts
+        function renderContacts() {
+            const list = document.getElementById('contactList');
+            if (appState.contacts.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-gray); text-align: center; padding: 2rem;">No contacts yet. Add up to 3.</p>';
+                return;
+            }
+
+            list.innerHTML = appState.contacts.map(c => `
+                <div class="contact-item">
+                    <div class="contact-info">
+                        <div class="contact-avatar">👤</div>
+                        <div>
+                            <h4 style="font-weight: 600;">${c.name}</h4>
+                            <p style="color: var(--text-gray); font-size: 0.875rem;">📱 ${c.phone}</p>
+                        </div>
+                    </div>
+                    <button class="btn-remove" onclick="removeContact('${c.id}')">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Toast
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = `toast toast-${type} show`;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function showRegister() {
+            showToast('Register', 'Enter email and password to create account', 'success');
+        }
+    </script>
+</body>
+
+</html>

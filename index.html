@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Guardian - Advanced Women Safety Protection System with real-time emergency response">
+    <title>Guardian - Women Safety Protection System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #13131a;
+            --bg-tertiary: #1a1a24;
+            --accent-primary: #ff3366;
+            --accent-secondary: #6366f1;
+            --accent-tertiary: #06b6d4;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #27272a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff1a4d;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            background: radial-gradient(circle at 20% 50%, var(--accent-primary) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--accent-secondary) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, var(--accent-tertiary) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            border-radius: 50px;
+            color: var(--accent-primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite;
+        }
+
+        @keyframes gradientFlow {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), #ff1a4d);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 51, 102, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-primary);
+        }
+
+        /* Dashboard Section */
+        .dashboard {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), rgba(99, 102, 241, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 60px rgba(255, 51, 102, 0.2);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* SOS Button */
+        .sos-container {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .sos-button {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), #ff1a4d);
+            border: none;
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 60px rgba(255, 51, 102, 0.4),
+                inset 0 -10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sos-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .sos-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 70px rgba(255, 51, 102, 0.6);
+        }
+
+        .sos-button:active {
+            transform: scale(0.95);
+        }
+
+        .sos-button.active {
+            animation: sosActive 1s infinite;
+        }
+
+        @keyframes sosActive {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 40px rgba(255, 51, 102, 0);
+            }
+        }
+
+        .sos-status {
+            margin-top: 2rem;
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-safe {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-alert {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-waiting {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* Location Display */
+        .location-info {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .location-info p {
+            margin: 0.75rem 0;
+            font-size: 1rem;
+        }
+
+        .location-info strong {
+            color: var(--accent-secondary);
+        }
+
+        /* Input Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.1);
+        }
+
+        /* Contact List */
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(5px);
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .contact-phone {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .btn-remove {
+            padding: 0.5rem 1.25rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Help Centers */
+        .help-center-item {
+            padding: 1.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-secondary);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .help-center-item:hover {
+            border-left-color: var(--accent-primary);
+            transform: translateX(5px);
+        }
+
+        .help-center-name {
+            font-weight: 700;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .help-center-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-width: 350px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: translateX(500px);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .toast-success .toast-icon {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .toast-error .toast-icon {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .toast-warning .toast-icon {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 51, 102, 0.2);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Auth Section */
+        .auth-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 3rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        /* Hidden Class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 6rem 1rem 2rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sos-button {
+                width: 200px;
+                height: 200px;
+                font-size: 2.5rem;
+            }
+
+            .toast {
+                right: 1rem;
+                left: 1rem;
+                min-width: auto;
+            }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--accent-primary);
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .scroll-indicator span::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            animation: scroll 2s infinite;
+        }
+
+        @keyframes scroll {
+            0% {
+                top: 10px;
+                opacity: 1;
+            }
+
+            100% {
+                top: 30px;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav id="nav">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                Guardian
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <div class="user-status">
+                <div class="status-indicator"></div>
+                <span id="userEmail" style="color: var(--text-secondary); font-size: 0.875rem;">Not signed in</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-tag">🚨 Advanced Safety System</div>
+            <h1>
+                Your Safety,<br>
+                <span class="gradient-text">Our Priority</span>
+            </h1>
+            <p>
+                Real-time emergency response with GPS tracking, instant alerts, and hardware integration.
+                Because every second counts when it matters most.
+            </p>
+            <div class="cta-buttons">
+                <button class="btn btn-primary" onclick="showSection('auth')">Get Started</button>
+                <button class="btn btn-secondary" onclick="showSection('dashboard')">View Dashboard</button>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- Auth Section -->
+    <section id="auth" class="dashboard hidden">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>Welcome to Guardian</h2>
+                <p>Sign in to access your safety dashboard</p>
+            </div>
+
+            <button class="btn btn-primary" onclick="signInWithGoogle()"
+                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        fill="#4285F4" />
+                    <path
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        fill="#34A853" />
+                    <path
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                        fill="#FBBC05" />
+                    <path
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        fill="#EA4335" />
+                </svg>
+                Continue with Google
+            </button>
+
+            <div class="divider">or</div>
+
+            <form id="emailAuthForm" onsubmit="signInWithEmail(event)">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-secondary" style="width: 100%;">Sign In</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="dashboard hidden">
+        <div class="section-header">
+            <div class="section-tag">Emergency Response</div>
+            <h2 class="section-title">Safety Dashboard</h2>
+            <p class="section-description">
+                Monitor your safety status, manage emergency contacts, and access instant help
+            </p>
+        </div>
+
+        <!-- SOS Emergency Panel -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🚨</div>
+                <h3 class="card-title">Emergency SOS</h3>
+            </div>
+            <div class="card-content">
+                <div class="sos-container">
+                    <button class="sos-button" id="sosButton" onclick="triggerSOS()">
+                        SOS
+                    </button>
+                    <div class="sos-status" id="sosStatus">Press SOS in case of emergency</div>
+                    <div class="status-badge badge-safe" id="statusBadge">System Ready</div>
+                    <div id="locationDisplay" class="hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Cards -->
+        <div class="grid">
+            <!-- Hardware Device -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">⌚</div>
+                    <h3 class="card-title">Hardware Device</h3>
+                </div>
+                <div class="card-content">
+                    <div
+                        style="display: flex; align-items: center; gap: 1rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px;">
+                        <div class="status-indicator"></div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">Device Connected</div>
+                            <div style="color: var(--text-secondary); font-size: 0.875rem;">ESP32 Panic Button Active
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="simulateHardwarePanic()"
+                        style="width: 100%; margin-top: 1.5rem;">
+                        Simulate Hardware Panic
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Location -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">📍</div>
+                    <h3 class="card-title">Live Location</h3>
+                </div>
+                <div class="card-content">
+                    <div id="currentLocation">
+                        <p style="color: var(--text-secondary);">Location will be fetched when SOS is triggered</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="fetchLocation()"
+                        style="width: 100%; margin-top: 1.5rem;">
+                        Fetch Current Location
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Contacts -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">📞</div>
+                <h3 class="card-title">Emergency Contacts</h3>
+            </div>
+            <div class="card-content">
+                <div id="contactList"></div>
+                <form onsubmit="addContact(event)" style="margin-top: 2rem;">
+                    <div class="form-group">
+                        <label for="contactName">Contact Name</label>
+                        <input type="text" id="contactName" placeholder="Enter name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactPhone">Phone Number</label>
+                        <input type="tel" id="contactPhone" placeholder="Enter phone number" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Add Contact</button>
+                </form>
+                <div
+                    style="margin-top: 2rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-left: 4px solid var(--warning); border-radius: 12px;">
+                    <div style="font-weight: 700; color: var(--warning); margin-bottom: 0.5rem;">📱 Message Preview
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 0.875rem; font-style: italic;"
+                        id="messagePreview">
+                        "I'm in danger. My location is: [GPS coordinates will be inserted here]"
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nearby Help Centers -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🏥</div>
+                <h3 class="card-title">Nearby Help Centers</h3>
+            </div>
+            <div class="card-content">
+                <div id="helpCenterList"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-icon" id="toastIcon"></div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle"></div>
+            <div class="toast-message" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration - REPLACE WITH YOUR CONFIG
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Make available globally
+        window.auth = auth;
+        window.db = db;
+        window.GoogleAuthProvider = GoogleAuthProvider;
+        window.signInWithPopup = signInWithPopup;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+        window.serverTimestamp = serverTimestamp;
+
+        // Auth State Observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('userEmail').textContent = user.email;
+                showToast('Welcome!', `Signed in as ${user.email}`, 'success');
+                loadUserData();
+            } else {
+                document.getElementById('userEmail').textContent = 'Not signed in';
+            }
+        });
+    </script>
+
+    <script>
+        // Application State
+        const appState = {
+            currentLocation: null,
+            emergencyContacts: [],
+            sosActive: false,
+            helpCenters: [
+                { name: "City Police Station", type: "Police", distance: "0.8 km", phone: "100" },
+                { name: "Women's Helpline", type: "NGO", distance: "1.2 km", phone: "1091" },
+                { name: "City General Hospital", type: "Hospital", distance: "1.5 km", phone: "108" },
+                { name: "Women Safety Cell", type: "Police", distance: "2.1 km", phone: "1091" },
+                { name: "Emergency Medical Services", type: "Hospital", distance: "2.3 km", phone: "102" }
+            ]
+        };
+
+        // Initialize App
+        function initApp() {
+            renderHelpCenters();
+            renderContacts();
+        }
+
+        // Section Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            if (sectionId !== 'home') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Toast Notification
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toast.className = `toast toast-${type}`;
+
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠'
+            };
+            toastIcon.textContent = icons[type];
+
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // Authentication Functions
+        async function signInWithGoogle() {
+            try {
+                const provider = new window.GoogleAuthProvider();
+                await window.signInWithPopup(window.auth, provider);
+                showSection('dashboard');
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            }
+        }
+
+        async function signInWithEmail(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await window.signInWithEmailAndPassword(window.auth, email, password);
+                showSection('dashboard');
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            }
+        }
+
+        // Load User Data from Firestore
+        async function loadUserData() {
+            try {
+                const user = window.auth.currentUser;
+                if (!user) return;
+
+                const contactsRef = window.collection(window.db, `users/${user.uid}/contacts`);
+                const snapshot = await window.getDocs(contactsRef);
+
+                appState.emergencyContacts = [];
+                snapshot.forEach(doc => {
+                    appState.emergencyContacts.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderContacts();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Geolocation
+        function fetchLocation() {
+            if (!navigator.geolocation) {
+                showToast('Error', 'Geolocation not supported', 'error');
+                return;
+            }
+
+            showToast('Fetching', 'Getting your location...', 'warning');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    appState.currentLocation = { latitude, longitude };
+                    displayLocation(latitude, longitude);
+                    showToast('Success', 'Location fetched successfully', 'success');
+                },
+                (error) => {
+                    showToast('Error', 'Unable to fetch location', 'error');
+                }
+            );
+        }
+
+        function displayLocation(lat, lng) {
+            const html = `
+                <div class="location-info">
+                    <p><strong>Latitude:</strong> ${lat.toFixed(6)}</p>
+                    <p><strong>Longitude:</strong> ${lng.toFixed(6)}</p>
+                    <p style="color: var(--success); font-weight: 600; margin-top: 0.5rem;">✓ Location fetched</p>
+                </div>
+            `;
+            document.getElementById('currentLocation').innerHTML = html;
+        }
+
+        // SOS Emergency
+        async function triggerSOS() {
+            if (appState.sosActive) {
+                showToast('Alert', 'SOS already active!', 'warning');
+                return;
+            }
+
+            appState.sosActive = true;
+            const sosButton = document.getElementById('sosButton');
+            const sosStatus = document.getElementById('sosStatus');
+            const statusBadge = document.getElementById('statusBadge');
+            const locationDisplay = document.getElementById('locationDisplay');
+
+            sosButton.classList.add('active');
+            statusBadge.className = 'status-badge badge-alert';
+            statusBadge.textContent = 'ALERT SENT';
+            sosStatus.innerHTML = '<div class="spinner"></div><p>Activating emergency protocol...</p>';
+
+            showToast('SOS Activated', 'Emergency alert triggered!', 'error');
+
+            // Fetch location
+            if (!appState.currentLocation) {
+                await new Promise((resolve) => {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const { latitude, longitude } = position.coords;
+                            appState.currentLocation = { latitude, longitude };
+                            resolve();
+                        },
+                        () => {
+                            appState.currentLocation = { latitude: 0, longitude: 0 };
+                            resolve();
+                        }
+                    );
+                });
+            }
+
+            // Save to Firestore
+            try {
+                const user = window.auth.currentUser;
+                if (user) {
+                    await window.addDoc(window.collection(window.db, `users/${user.uid}/emergencies`), {
+                        location: appState.currentLocation,
+                        timestamp: window.serverTimestamp(),
+                        status: 'active'
+                    });
+                }
+            } catch (error) {
+                console.error('Error saving emergency:', error);
+            }
+
+            setTimeout(() => {
+                alertHelpCenters();
+                alertEmergencyContacts();
+
+                const { latitude, longitude } = appState.currentLocation;
+                locationDisplay.innerHTML = `
+                    <div class="location-info">
+                        <p><strong>📍 Your Location:</strong></p>
+                        <p><strong>Latitude:</strong> ${latitude.toFixed(6)}</p>
+                        <p><strong>Longitude:</strong> ${longitude.toFixed(6)}</p>
+                        <p style="color: var(--success); font-weight: 600; margin-top: 0.5rem;">✓ Location shared</p>
+                    </div>
+                `;
+                locationDisplay.classList.remove('hidden');
+
+                sosStatus.innerHTML = `
+                    <p style="color: var(--success); font-weight: 600;">✓ Alert sent successfully</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Help is on the way!</p>
+                `;
+
+                statusBadge.className = 'status-badge badge-waiting';
+                statusBadge.textContent = 'WAITING FOR HELP';
+
+                showToast('Help Contacted', 'Emergency services notified', 'success');
+            }, 2000);
+        }
+
+        function alertHelpCenters() {
+            appState.helpCenters.forEach((center, index) => {
+                setTimeout(() => {
+                    showToast('Help Center Alerted', `${center.name} notified`, 'success');
+                }, 1000 * (index + 1));
+            });
+        }
+
+        function alertEmergencyContacts() {
+            if (appState.emergencyContacts.length === 0) {
+                showToast('No Contacts', 'Add emergency contacts', 'warning');
+                return;
+            }
+
+            const { latitude, longitude } = appState.currentLocation;
+            const message = `I'm in danger. My location is: Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`;
+
+            appState.emergencyContacts.forEach((contact, index) => {
+                setTimeout(() => {
+                    showToast('Contact Alerted', `Message sent to ${contact.name}`, 'success');
+                }, 2000 + (500 * index));
+            });
+
+            document.getElementById('messagePreview').textContent = message;
+        }
+
+        function simulateHardwarePanic() {
+            showToast('Hardware Alert', 'Panic button pressed!', 'error');
+            setTimeout(() => triggerSOS(), 500);
+        }
+
+        // Emergency Contacts
+        async function addContact(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('contactName');
+            const phoneInput = document.getElementById('contactPhone');
+
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+
+            if (appState.emergencyContacts.length >= 3) {
+                showToast('Limit Reached', 'Maximum 3 contacts allowed', 'warning');
+                return;
+            }
+
+            try {
+                const user = window.auth.currentUser;
+                if (user) {
+                    const docRef = await window.addDoc(window.collection(window.db, `users/${user.uid}/contacts`), {
+                        name,
+                        phone,
+                        createdAt: window.serverTimestamp()
+                    });
+
+                    appState.emergencyContacts.push({ id: docRef.id, name, phone });
+                } else {
+                    // Local storage fallback
+                    appState.emergencyContacts.push({
+                        id: Date.now(),
+                        name,
+                        phone
+                    });
+                }
+
+                renderContacts();
+                nameInput.value = '';
+                phoneInput.value = '';
+                showToast('Contact Added', `${name} added`, 'success');
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            }
+        }
+
+        async function removeContact(id) {
+            try {
+                const user = window.auth.currentUser;
+                if (user) {
+                    await window.deleteDoc(window.doc(window.db, `users/${user.uid}/contacts`, id));
+                }
+
+                appState.emergencyContacts = appState.emergencyContacts.filter(c => c.id !== id);
+                renderContacts();
+                showToast('Contact Removed', 'Emergency contact removed', 'success');
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            }
+        }
+
+        function renderContacts() {
+            const contactList = document.getElementById('contactList');
+
+            if (appState.emergencyContacts.length === 0) {
+                contactList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No emergency contacts yet. Add up to 3 contacts.</p>';
+                return;
+            }
+
+            contactList.innerHTML = appState.emergencyContacts.map(contact => `
+                <div class="contact-item">
+                    <div class="contact-info">
+                        <div class="contact-avatar">👤</div>
+                        <div class="contact-details">
+                            <div class="contact-name">${contact.name}</div>
+                            <div class="contact-phone">📱 ${contact.phone}</div>
+                        </div>
+                    </div>
+                    <button class="btn-remove" onclick="removeContact('${contact.id}')">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function renderHelpCenters() {
+            const helpCenterList = document.getElementById('helpCenterList');
+
+            helpCenterList.innerHTML = appState.helpCenters.map(center => `
+                <div class="help-center-item">
+                    <div class="help-center-name">${center.name}</div>
+                    <div class="help-center-meta">
+                        <span>📍 ${center.type}</span>
+                        <span>📞 ${center.phone}</span>
+                        <span style="color: var(--success);">Distance: ${center.distance}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+
+</html>

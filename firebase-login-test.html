@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        button {
+            padding: 12px 24px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-google {
+            background: #4285f4;
+            color: white;
+        }
+
+        .btn-email {
+            background: #34a853;
+            color: white;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #333;
+            color: #fff;
+        }
+
+        .log {
+            background: #000;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .success {
+            color: #4caf50;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .info {
+            color: #2196f3;
+        }
+
+        .warning {
+            color: #ff9800;
+        }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+    <h1>🔍 Firebase Login Diagnostic Tool</h1>
+
+    <div class="test-section">
+        <h2>Firebase Status</h2>
+        <div id="firebaseStatus">Checking...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Google Sign-In Test</h2>
+        <button class="btn-google" onclick="testGoogleLogin()">Test Google Login</button>
+        <div id="googleStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Email/Password Test</h2>
+        <input type="email" id="testEmail" placeholder="Email" value="test@example.com">
+        <input type="password" id="testPassword" placeholder="Password" value="test123456">
+        <br>
+        <button class="btn-email" onclick="testEmailLogin()">Test Email Login</button>
+        <button class="btn-email" onclick="testEmailSignup()">Test Email Signup</button>
+        <div id="emailStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Current User</h2>
+        <div id="userStatus">Not logged in</div>
+        <button onclick="testLogout()">Logout</button>
+    </div>
+
+    <div class="log" id="logOutput"></div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIDre-KHAc8Qp0LAj1Y15rfSoDeKYQ9BI",
+            authDomain: "niminil.firebaseapp.com",
+            databaseURL: "https://niminil-default-rtdb.firebaseio.com",
+            projectId: "niminil",
+            storageBucket: "niminil.firebasestorage.app",
+            messagingSenderId: "781231700779",
+            appId: "1:781231700779:web:3868c7daf3be4ab937236e",
+            measurementId: "G-S4XN8Y2ZLS"
+        };
+
+        // Logging function
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('logOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+
+        // Initialize Firebase
+        let auth;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            log('✓ Firebase initialized successfully', 'success');
+            document.getElementById('firebaseStatus').innerHTML = '<span class="success">✓ Connected</span>';
+        } catch (error) {
+            log('✗ Firebase initialization failed: ' + error.message, 'error');
+            document.getElementById('firebaseStatus').innerHTML = '<span class="error">✗ Failed: ' + error.message + '</span>';
+        }
+
+        // Auth state observer
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                log('✓ User logged in: ' + user.email, 'success');
+                document.getElementById('userStatus').innerHTML = `
+                    <div class="success">
+                        <strong>Logged in as:</strong><br>
+                        Email: ${user.email}<br>
+                        UID: ${user.uid}<br>
+                        Display Name: ${user.displayName || 'Not set'}
+                    </div>
+                `;
+            } else {
+                log('User logged out', 'info');
+                document.getElementById('userStatus').innerHTML = '<span class="warning">Not logged in</span>';
+            }
+        });
+
+        // Test Google Login
+        async function testGoogleLogin() {
+            log('Testing Google Sign-In...', 'info');
+            document.getElementById('googleStatus').innerHTML = '<span class="info">Attempting login...</span>';
+
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                log('Google provider created', 'info');
+
+                // Add scopes
+                provider.addScope('profile');
+                provider.addScope('email');
+
+                log('Attempting popup sign-in...', 'info');
+                const result = await auth.signInWithPopup(provider);
+
+                log('✓ Google login successful!', 'success');
+                log('User: ' + result.user.email, 'success');
+                document.getElementById('googleStatus').innerHTML = '<span class="success">✓ Login successful!</span>';
+            } catch (error) {
+                log('✗ Google login failed: ' + error.code, 'error');
+                log('Error message: ' + error.message, 'error');
+
+                let errorMsg = error.message;
+                if (error.code === 'auth/popup-blocked') {
+                    errorMsg = 'Popup was blocked by browser. Please allow popups for this site.';
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    errorMsg = 'Popup was closed before completing sign-in.';
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    errorMsg = 'This domain is not authorized for OAuth operations. Add it in Firebase Console.';
+                }
+
+                document.getElementById('googleStatus').innerHTML = `<span class="error">✗ ${errorMsg}</span>`;
+            }
+        }
+
+        // Test Email Login
+        async function testEmailLogin() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+
+            log(`Testing email login with: ${email}`, 'info');
+            document.getElementById('emailStatus').innerHTML = '<span class="info">Attempting login...</span>';
+
+            try {
+                const result = await auth.signInWithEmailAndPassword(email, password);
+                log('✓ Email login successful!', 'success');
+                document.getElementById('emailStatus').innerHTML = '<span class="success">✓ Login successful!</span>';
+            } catch (error) {
+                log('✗ Email login failed: ' + error.code, 'error');
+                log('Error message: ' + error.message, 'error');
+
+                let errorMsg = error.message;
+                if (error.code === 'auth/user-not-found') {
+                    errorMsg = 'No user found with this email. Try signing up first.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMsg = 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = 'Invalid email format.';
+                }
+
+                document.getElementById('emailStatus').innerHTML = `<span class="error">✗ ${errorMsg}</span>`;
+            }
+        }
+
+        // Test Email Signup
+        async function testEmailSignup() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+
+            log(`Testing email signup with: ${email}`, 'info');
+            document.getElementById('emailStatus').innerHTML = '<span class="info">Creating account...</span>';
+
+            try {
+                const result = await auth.createUserWithEmailAndPassword(email, password);
+                log('✓ Account created successfully!', 'success');
+                document.getElementById('emailStatus').innerHTML = '<span class="success">✓ Account created!</span>';
+            } catch (error) {
+                log('✗ Signup failed: ' + error.code, 'error');
+                log('Error message: ' + error.message, 'error');
+
+                let errorMsg = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMsg = 'Email already in use. Try logging in instead.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMsg = 'Password is too weak. Use at least 6 characters.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = 'Invalid email format.';
+                }
+
+                document.getElementById('emailStatus').innerHTML = `<span class="error">✗ ${errorMsg}</span>`;
+            }
+        }
+
+        // Test Logout
+        async function testLogout() {
+            try {
+                await auth.signOut();
+                log('✓ Logged out successfully', 'success');
+            } catch (error) {
+                log('✗ Logout failed: ' + error.message, 'error');
+            }
+        }
+
+        // Initial log
+        log('Diagnostic tool loaded', 'info');
+        log('Waiting for user interaction...', 'info');
+    </script>
+</body>
+
+</html>

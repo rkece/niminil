@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Admin Dashboard - Firebase</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #13131a;
+            --bg-sidebar: #0d0d12;
+            --accent-pink: #ff3366;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --border: #1f1f28;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            animation: float 25s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-pink), transparent);
+            top: -15%;
+            left: -15%;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-purple), transparent);
+            top: 40%;
+            right: -15%;
+            animation-delay: 7s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(60px, -60px) scale(1.15);
+            }
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--accent-pink);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-title h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-pink);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .table-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-emergency {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            min-width: 350px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: translateX(500px);
+            transition: transform 0.5s;
+            z-index: 3000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <div style="text-align: center;">
+                <div class="login-logo">👨‍💼</div>
+                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin-bottom: 0.5rem;">Admin
+                    Login</h1>
+                <p style="color: var(--text-gray); margin-bottom: 2rem;">Guardian Dashboard Access</p>
+            </div>
+
+            <form onsubmit="adminLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Admin Email</label>
+                    <input type="email" class="form-input" id="adminEmail" placeholder="admin@guardian.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="adminPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-container hidden">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>🛡️ Guardian Admin</h1>
+                <p style="color: var(--text-gray); font-size: 0.875rem; margin-top: 0.5rem;">Dashboard</p>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link active" onclick="showSection('overview')">📊 Overview</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('emergencies')">🚨 Emergencies</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('users')">👥 Users</a></li>
+                    <li><a href="#" class="nav-link" onclick="logout()">🚪 Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-title">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p style="color: var(--text-gray);">Real-time monitoring system</p>
+                </div>
+                <div>
+                    <span id="adminName" style="color: var(--text-gray);"></span>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section id="overview">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"
+                            style="background: linear-gradient(135deg, var(--accent-blue), #2563eb);">👥</div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon"
+                            style="background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);">🚨</div>
+                        <div class="stat-value" id="activeEmergencies" style="color: var(--accent-pink);">0</div>
+                        <div class="stat-label">Active Emergencies</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon"
+                            style="background: linear-gradient(135deg, var(--accent-green), #059669);">✓</div>
+                        <div class="stat-value" id="totalEmergencies">0</div>
+                        <div class="stat-label">Total Alerts</div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h2 class="table-title">Recent Emergencies</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User Email</th>
+                                <th>Location</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emergenciesTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-gray); padding: 3rem;">
+                                    Loading emergencies from Firebase...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Emergencies Section -->
+            <section id="emergencies" class="hidden">
+                <div class="table-container">
+                    <h2 class="table-title">All Emergency Alerts</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Coordinates</th>
+                                <th>Timestamp</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allEmergenciesBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-gray); padding: 3rem;">
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="hidden">
+                <div class="table-container">
+                    <h2 class="table-title">Registered Users</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Email</th>
+                                <th>Provider</th>
+                                <th>Last Sign In</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-gray); padding: 3rem;">
+                                    Loading users...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div style="font-weight: 700;" id="toastTitle">Success</div>
+        <div style="color: var(--text-gray); font-size: 0.875rem; margin-top: 0.25rem;" id="toastMessage">Operation
+            completed</div>
+    </div>
+
+    <script>
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIDre-KHAc8Qp0LAj1Y15rfSoDeKYQ9BI",
+            authDomain: "niminil.firebaseapp.com",
+            databaseURL: "https://niminil-default-rtdb.firebaseio.com",
+            projectId: "niminil",
+            storageBucket: "niminil.firebasestorage.app",
+            messagingSenderId: "781231700779",
+            appId: "1:781231700779:web:3868c7daf3be4ab937236e",
+            measurementId: "G-S4XN8Y2ZLS"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const firestore = firebase.firestore();
+
+        let emergenciesListener = null;
+
+        // Auth State Observer
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('adminName').textContent = user.email;
+                loadDashboardData();
+                showToast('Welcome Admin', 'Logged in successfully', 'success');
+            } else {
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('adminDashboard').classList.add('hidden');
+            }
+        });
+
+        // Admin Login
+        async function adminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                showToast('Login Failed', error.message, 'error');
+            }
+        }
+
+        // Logout
+        function logout() {
+            auth.signOut();
+            if (emergenciesListener) emergenciesListener();
+            showToast('Logged Out', 'Admin session ended', 'success');
+        }
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            loadEmergencies();
+            loadUsers();
+            loadStats();
+        }
+
+        // Load Real-time Emergencies
+        function loadEmergencies() {
+            const emergenciesRef = firestore.collection('emergencies').orderBy('timestamp', 'desc').limit(20);
+
+            emergenciesListener = emergenciesRef.onSnapshot((snapshot) => {
+                const emergencies = [];
+                snapshot.forEach(doc => {
+                    emergencies.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderEmergencies(emergencies);
+                updateStats(emergencies);
+            }, (error) => {
+                console.error('Error loading emergencies:', error);
+                showToast('Error', 'Failed to load emergencies', 'error');
+            });
+        }
+
+        // Render Emergencies Table
+        function renderEmergencies(emergencies) {
+            const tbody = document.getElementById('emergenciesTableBody');
+            const allBody = document.getElementById('allEmergenciesBody');
+
+            if (emergencies.length === 0) {
+                const emptyRow = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray); padding: 3rem;">No emergencies found</td></tr>';
+                tbody.innerHTML = emptyRow;
+                if (allBody) allBody.innerHTML = emptyRow.replace('5', '6');
+                return;
+            }
+
+            const rows = emergencies.map(e => {
+                const time = e.timestamp ? new Date(e.timestamp.toDate()).toLocaleString() : 'N/A';
+                const lat = e.location?.lat?.toFixed(4) || 'N/A';
+                const lng = e.location?.lng?.toFixed(4) || 'N/A';
+
+                return `
+                    <tr>
+                        <td><strong>${e.userEmail || 'Unknown'}</strong></td>
+                        <td>${lat}, ${lng}</td>
+                        <td>${time}</td>
+                        <td><span class="status-badge status-${e.status}">${e.status}</span></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewEmergency('${e.id}')">View</button>
+                            <button class="btn btn-secondary" onclick="resolveEmergency('${e.id}')">Resolve</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = rows;
+            if (allBody) {
+                const detailedRows = emergencies.map(e => {
+                    const time = e.timestamp ? new Date(e.timestamp.toDate()).toLocaleString() : 'N/A';
+                    const lat = e.location?.lat?.toFixed(6) || 'N/A';
+                    const lng = e.location?.lng?.toFixed(6) || 'N/A';
+
+                    return `
+                        <tr>
+                            <td><strong>${e.id.substring(0, 8)}...</strong></td>
+                            <td>${e.userEmail || 'Unknown'}</td>
+                            <td>${lat}, ${lng}</td>
+                            <td>${time}</td>
+                            <td><span class="status-badge status-${e.status}">${e.status}</span></td>
+                            <td>
+                                <button class="btn btn-secondary" onclick="viewOnMap('${lat}', '${lng}')">Map</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                allBody.innerHTML = detailedRows;
+            }
+        }
+
+        // Load Users (from Authentication)
+        async function loadUsers() {
+            // Note: Firebase Auth doesn't allow listing users from client-side
+            // You would need Cloud Functions for this
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-gray); padding: 3rem;">
+                        User listing requires Firebase Admin SDK (Cloud Functions)<br>
+                        <small>Implement Cloud Function to list users</small>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Update Stats
+        function updateStats(emergencies) {
+            const activeCount = emergencies.filter(e => e.status === 'active').length;
+
+            document.getElementById('activeEmergencies').textContent = activeCount;
+            document.getElementById('totalEmergencies').textContent = emergencies.length;
+
+            // Get total users count from Firestore
+            firestore.collection('users').get().then(snapshot => {
+                document.getElementById('totalUsers').textContent = snapshot.size;
+            });
+        }
+
+        // View Emergency Details
+        function viewEmergency(id) {
+            showToast('Emergency Details', `Viewing emergency ${id.substring(0, 8)}...`, 'success');
+        }
+
+        // Resolve Emergency
+        async function resolveEmergency(id) {
+            try {
+                await firestore.collection('emergencies').doc(id).update({
+                    status: 'resolved',
+                    resolvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('Emergency Resolved', 'Status updated successfully', 'success');
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            }
+        }
+
+        // View on Map
+        function viewOnMap(lat, lng) {
+            const url = `https://www.google.com/maps?q=${lat},${lng}`;
+            window.open(url, '_blank');
+        }
+
+        // Show Section
+        function showSection(section) {
+            document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(section).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const titles = {
+                overview: 'Dashboard Overview',
+                emergencies: 'All Emergency Alerts',
+                users: 'Registered Users'
+            };
+            document.getElementById('pageTitle').textContent = titles[section];
+        }
+
+        // Toast Notification
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = `toast toast-${type} show`;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // Load stats on page load
+        function loadStats() {
+            // Listen to real-time updates
+            database.ref('stats').on('value', (snapshot) => {
+                const stats = snapshot.val();
+                if (stats) {
+                    document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

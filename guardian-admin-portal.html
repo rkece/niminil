@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Admin Portal - Women Safety Management</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #13131a;
+            --bg-sidebar: #0d0d12;
+            --accent-pink: #ff3366;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --border: #1f1f28;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            animation: float 25s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-pink), transparent);
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-purple), transparent);
+            top: 50%;
+            right: -10%;
+            animation-delay: 8s;
+        }
+
+        .orb-3 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--accent-blue), transparent);
+            bottom: -20%;
+            left: 40%;
+            animation-delay: 15s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(60px, -60px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-60px, 60px) scale(0.9);
+            }
+        }
+
+        /* Login Page */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-container {
+            max-width: 500px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 4px rgba(255, 51, 102, 0.1);
+        }
+
+        .btn {
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);
+            color: white;
+            box-shadow: 0 20px 40px rgba(255, 51, 102, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px rgba(255, 51, 102, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Admin Layout */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-logo p {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            margin-top: 0.25rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            padding: 0.75rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--text-white);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(255, 51, 102, 0.2), transparent);
+            color: var(--accent-pink);
+            border-left: 3px solid var(--accent-pink);
+        }
+
+        .menu-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem 3rem;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .btn-logout {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            color: var(--accent-pink);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 51, 102, 0.2);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.pink {
+            background: rgba(255, 51, 102, 0.2);
+        }
+
+        .stat-icon.purple {
+            background: rgba(168, 85, 247, 0.2);
+        }
+
+        .stat-icon.blue {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .stat-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-trend {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .trend-up {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .trend-down {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-action {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-gray);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+
+        .card-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-white);
+        }
+
+        /* Alert List */
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .alert-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .alert-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .alert-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .alert-icon.critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .alert-icon.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .alert-icon.resolved {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-meta {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .badge-active {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-resolved {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        /* User List */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-online {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-offline {
+            background: var(--text-gray);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-gray);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 51, 102, 0.2);
+            border-top-color: var(--accent-pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            min-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: translateX(500px);
+            transition: transform 0.5s;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">🛡️</div>
+                <h1>Guardian Admin Portal</h1>
+                <p style="color: var(--text-gray);">Women Safety Management System</p>
+            </div>
+
+            <button class="btn btn-primary" onclick="loginWithGoogle()" style="margin-bottom: 1rem;">
+                Continue with Google
+            </button>
+
+            <div class="divider">or</div>
+
+            <form onsubmit="loginWithEmail(event)">
+                <div class="form-group">
+                    <label class="form-label">Admin Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="admin@guardian.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-layout hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>Guardian</h2>
+                <p>Admin Portal</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" onclick="showPage('dashboard')">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="menu-item" onclick="showPage('alerts')">
+                    <span class="menu-icon">🚨</span>
+                    <span>Active Alerts</span>
+                </li>
+                <li class="menu-item" onclick="showPage('users')">
+                    <span class="menu-icon">👥</span>
+                    <span>Registered Users</span>
+                </li>
+                <li class="menu-item" onclick="showPage('devices')">
+                    <span class="menu-icon">📱</span>
+                    <span>Devices</span>
+                </li>
+                <li class="menu-item" onclick="showPage('history')">
+                    <span class="menu-icon">📜</span>
+                    <span>Alert History</span>
+                </li>
+                <li class="menu-item" onclick="showPage('analytics')">
+                    <span class="menu-icon">📈</span>
+                    <span>Analytics</span>
+                </li>
+                <li class="menu-item" onclick="showPage('settings')">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page-content">
+                <div class="top-bar">
+                    <h1 class="page-title">Dashboard Overview</h1>
+                    <div class="user-menu">
+                        <div class="user-avatar">👤</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.875rem;" id="adminName">Admin</div>
+                            <div style="font-size: 0.75rem; color: var(--text-gray);" id="adminEmail"></div>
+                        </div>
+                        <button class="btn-logout" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon pink">🚨</div>
+                        <div class="stat-value" id="activeAlerts">0</div>
+                        <div class="stat-label">Active Alerts</div>
+                        <div class="stat-trend trend-down">↓ 12% from last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">👥</div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Registered Users</div>
+                        <div class="stat-trend trend-up">↑ 8% from last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📱</div>
+                        <div class="stat-value" id="activeDevices">0</div>
+                        <div class="stat-label">Active Devices</div>
+                        <div class="stat-trend trend-up">↑ 5% from last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-value" id="resolvedToday">0</div>
+                        <div class="stat-label">Resolved Today</div>
+                        <div class="stat-trend trend-up">↑ 15% from yesterday</div>
+                    </div>
+                </div>
+
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <!-- Recent Alerts -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Alerts</h3>
+                            <button class="card-action" onclick="showPage('alerts')">View All →</button>
+                        </div>
+                        <div id="recentAlertsList" class="alert-list">
+                            <div class="empty-state">
+                                <div class="empty-icon">🔔</div>
+                                <p>No recent alerts</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Users -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Active Users</h3>
+                            <button class="card-action" onclick="showPage('users')">View All →</button>
+                        </div>
+                        <div id="activeUsersList" class="user-list">
+                            <div class="empty-state">
+                                <div class="empty-icon">👥</div>
+                                <p>No active users</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Page -->
+            <div id="alertsPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Active Alerts</h1>
+                    <div class="user-menu">
+                        <button class="card-action" onclick="refreshAlerts()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div id="allAlertsList" class="alert-list">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div id="usersPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Registered Users</h1>
+                    <div class="user-menu">
+                        <button class="card-action" onclick="refreshUsers()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Registered</th>
+                                    <th>Last Login</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Devices Page -->
+            <div id="devicesPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Registered Devices</h1>
+                </div>
+                <div class="card">
+                    <div class="empty-state">
+                        <div class="empty-icon">📱</div>
+                        <p>Device management coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Page -->
+            <div id="historyPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Alert History</h1>
+                </div>
+                <div class="card">
+                    <div id="historyList" class="alert-list">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analyticsPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Analytics & Reports</h1>
+                </div>
+                <div class="card">
+                    <div class="empty-state">
+                        <div class="empty-icon">📈</div>
+                        <p>Analytics dashboard coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">System Settings</h1>
+                </div>
+                <div class="card">
+                    <div class="empty-state">
+                        <div class="empty-icon">⚙️</div>
+                        <p>Settings panel coming soon</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div style="font-weight: 700;" id="toastTitle">Success</div>
+        <div style="color: var(--text-gray); font-size: 0.875rem;" id="toastMessage">Operation completed</div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIDre-KHAc8Qp0LAj1Y15rfSoDeKYQ9BI",
+            authDomain: "niminil.firebaseapp.com",
+            databaseURL: "https://niminil-default-rtdb.firebaseio.com",
+            projectId: "niminil",
+            storageBucket: "niminil.firebasestorage.app",
+            messagingSenderId: "781231700779",
+            appId: "1:781231700779:web:3868c7daf3be4ab937236e",
+            measurementId: "G-S4XN8Y2ZLS"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const firestore = firebase.firestore();
+
+        // App State
+        const appState = {
+            currentUser: null,
+            currentPage: 'dashboard',
+            alerts: [],
+            users: [],
+            emergencies: []
+        };
+
+        // Save/Update User Profile in Realtime Database
+        async function saveUserProfile(user) {
+            if (!user) return;
+
+            try {
+                const userRef = database.ref('users/' + user.uid);
+                const profileData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || user.email.split('@')[0],
+                    photoURL: user.photoURL || null,
+                    lastLogin: firebase.database.ServerValue.TIMESTAMP,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                // Check if user exists
+                const snapshot = await userRef.once('value');
+                if (!snapshot.exists()) {
+                    // New user - add createdAt
+                    profileData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+                    console.log('Creating new user profile in database');
+                }
+
+                // Save to Realtime Database
+                await userRef.update(profileData);
+                console.log('User profile saved successfully to Realtime Database');
+
+                // Also save to Firestore for redundancy
+                await firestore.collection('users').doc(user.uid).set({
+                    ...profileData,
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: snapshot.exists() ?
+                        (await firestore.collection('users').doc(user.uid).get()).data()?.createdAt || firebase.firestore.FieldValue.serverTimestamp() :
+                        firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                return true;
+            } catch (error) {
+                console.error('Error saving user profile:', error);
+                showToast('Warning', 'Profile saved locally, but database sync failed', 'warning');
+                return false;
+            }
+        }
+
+        // Auth State Observer
+        auth.onAuthStateChanged(async (user) => {
+            console.log('Auth state changed:', user ? user.email : 'logged out');
+
+            if (user) {
+                try {
+                    appState.currentUser = user;
+
+                    // Save user profile to database (non-blocking)
+                    saveUserProfile(user).catch(err => {
+                        console.error('Failed to save profile, but continuing:', err);
+                    });
+
+                    console.log('Updating UI elements...');
+                    document.getElementById('adminName').textContent = user.displayName || 'Admin';
+                    document.getElementById('adminEmail').textContent = user.email;
+
+                    console.log('Hiding login page...');
+                    document.getElementById('loginPage').classList.add('hidden');
+
+                    console.log('Showing admin dashboard...');
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+
+                    console.log('Loading dashboard data...');
+                    await loadDashboardData();
+
+                    console.log('Dashboard loaded successfully!');
+                    showToast('Welcome!', `Logged in as ${user.email}`, 'success');
+                } catch (error) {
+                    console.error('Error in auth state handler:', error);
+                    showToast('Error', 'Failed to load dashboard: ' + error.message, 'error');
+
+                    // Still try to show the dashboard even if there's an error
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+                }
+            } else {
+                appState.currentUser = null;
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('adminDashboard').classList.add('hidden');
+            }
+        });
+
+        // Google Login
+        async function loginWithGoogle() {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('profile');
+                provider.addScope('email');
+
+                console.log('Attempting Google sign-in...');
+                await auth.signInWithPopup(provider);
+            } catch (error) {
+                console.error('Google login error:', error.code, error.message);
+                let errorMessage = error.message;
+                if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Popup was blocked. Please allow popups for this site.';
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Sign-in was cancelled.';
+                }
+                showToast('Login Failed', errorMessage, 'error');
+            }
+        }
+
+        // Email Login
+        async function loginWithEmail(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    const shouldCreate = confirm(`No account found for ${email}.\n\nCreate admin account?`);
+                    if (shouldCreate) {
+                        try {
+                            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                            await userCredential.user.updateProfile({
+                                displayName: 'Admin'
+                            });
+                            showToast('Account Created', 'Admin account created successfully!', 'success');
+                        } catch (createError) {
+                            showToast('Error', createError.message, 'error');
+                        }
+                    }
+                } else {
+                    showToast('Login Failed', error.message, 'error');
+                }
+            }
+        }
+
+        // Logout
+        function logout() {
+            auth.signOut();
+            showToast('Goodbye', 'Logged out successfully', 'success');
+        }
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            console.log('Starting to load dashboard data...');
+            try {
+                console.log('Loading users from database...');
+                // Load users
+                const usersSnapshot = await database.ref('users').once('value');
+                const usersData = usersSnapshot.val() || {};
+                appState.users = Object.keys(usersData).map(uid => ({
+                    uid,
+                    ...usersData[uid]
+                }));
+                console.log(`Loaded ${appState.users.length} users`);
+
+                console.log('Loading emergencies from database...');
+                // Load emergencies
+                const emergenciesSnapshot = await database.ref('emergencies').once('value');
+                const emergenciesData = emergenciesSnapshot.val() || {};
+                appState.emergencies = [];
+
+                Object.keys(emergenciesData).forEach(userId => {
+                    const userEmergencies = emergenciesData[userId];
+                    Object.keys(userEmergencies).forEach(emergencyId => {
+                        appState.emergencies.push({
+                            id: emergencyId,
+                            userId,
+                            ...userEmergencies[emergencyId]
+                        });
+                    });
+                });
+                console.log(`Loaded ${appState.emergencies.length} emergencies`);
+
+                // Sort by timestamp
+                appState.emergencies.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                console.log('Updating dashboard UI...');
+                updateDashboard();
+                console.log('Dashboard data loaded successfully!');
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showToast('Warning', 'Some data failed to load. Dashboard may be incomplete.', 'warning');
+
+                // Still try to update with whatever data we have
+                try {
+                    updateDashboard();
+                } catch (updateError) {
+                    console.error('Error updating dashboard:', updateError);
+                }
+            }
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            // Update stats
+            const activeAlerts = appState.emergencies.filter(e => e.status === 'active').length;
+            const resolvedToday = appState.emergencies.filter(e => {
+                const today = new Date().setHours(0, 0, 0, 0);
+                const emergencyDate = new Date(e.timestamp).setHours(0, 0, 0, 0);
+                return e.status === 'resolved' && emergencyDate === today;
+            }).length;
+
+            document.getElementById('activeAlerts').textContent = activeAlerts;
+            document.getElementById('totalUsers').textContent = appState.users.length;
+            document.getElementById('activeDevices').textContent = appState.users.length; // Assuming 1 device per user
+            document.getElementById('resolvedToday').textContent = resolvedToday;
+
+            // Update recent alerts
+            const recentAlerts = appState.emergencies.slice(0, 5);
+            const alertsList = document.getElementById('recentAlertsList');
+
+            if (recentAlerts.length === 0) {
+                alertsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <p>No recent alerts</p>
+                    </div>
+                `;
+            } else {
+                alertsList.innerHTML = recentAlerts.map(alert => {
+                    const user = appState.users.find(u => u.uid === alert.userId);
+                    const statusClass = alert.status === 'active' ? 'critical' : 'resolved';
+                    const statusBadge = alert.status === 'active' ? 'badge-critical' : 'badge-resolved';
+                    const timeAgo = getTimeAgo(alert.timestamp);
+
+                    return `
+                        <div class="alert-item">
+                            <div class="alert-icon ${statusClass}">🚨</div>
+                            <div class="alert-content">
+                                <div class="alert-title">${user?.email || alert.userEmail || 'Unknown User'}</div>
+                                <div class="alert-meta">
+                                    <span class="badge ${statusBadge}">${alert.status || 'active'}</span>
+                                    ${alert.location ? `📍 Lat: ${alert.location.lat?.toFixed(4)}, Lng: ${alert.location.lng?.toFixed(4)}` : '📍 Location unavailable'}
+                                </div>
+                            </div>
+                            <div class="alert-time">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Update active users
+            const activeUsers = appState.users.slice(0, 5);
+            const usersList = document.getElementById('activeUsersList');
+
+            if (activeUsers.length === 0) {
+                usersList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <p>No registered users</p>
+                    </div>
+                `;
+            } else {
+                usersList.innerHTML = activeUsers.map(user => `
+                    <div class="user-item">
+                        <div class="user-avatar-small">👤</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.displayName || 'User'}</div>
+                            <div class="user-email">${user.email}</div>
+                        </div>
+                        <div class="status-dot status-online"></div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Show Page
+        function showPage(pageName) {
+            // Update menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+
+            // Show selected page
+            const pageMap = {
+                'dashboard': 'dashboardPage',
+                'alerts': 'alertsPage',
+                'users': 'usersPage',
+                'devices': 'devicesPage',
+                'history': 'historyPage',
+                'analytics': 'analyticsPage',
+                'settings': 'settingsPage'
+            };
+
+            const pageId = pageMap[pageName];
+            if (pageId) {
+                document.getElementById(pageId).classList.remove('hidden');
+                appState.currentPage = pageName;
+
+                // Load page-specific data
+                if (pageName === 'alerts') loadAllAlerts();
+                if (pageName === 'users') loadAllUsers();
+                if (pageName === 'history') loadHistory();
+            }
+        }
+
+        // Load All Alerts
+        function loadAllAlerts() {
+            const alertsList = document.getElementById('allAlertsList');
+            const activeAlerts = appState.emergencies.filter(e => e.status === 'active');
+
+            if (activeAlerts.length === 0) {
+                alertsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">✅</div>
+                        <p>No active alerts - All clear!</p>
+                    </div>
+                `;
+            } else {
+                alertsList.innerHTML = activeAlerts.map(alert => {
+                    const user = appState.users.find(u => u.uid === alert.userId);
+                    const timeAgo = getTimeAgo(alert.timestamp);
+
+                    return `
+                        <div class="alert-item">
+                            <div class="alert-icon critical">🚨</div>
+                            <div class="alert-content">
+                                <div class="alert-title">${user?.email || alert.userEmail || 'Unknown User'}</div>
+                                <div class="alert-meta">
+                                    <span class="badge badge-critical">ACTIVE</span>
+                                    ${alert.location ? `📍 Lat: ${alert.location.lat?.toFixed(6)}, Lng: ${alert.location.lng?.toFixed(6)}` : '📍 Location unavailable'}
+                                </div>
+                            </div>
+                            <div class="alert-time">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Load All Users
+        function loadAllUsers() {
+            const tbody = document.getElementById('usersTableBody');
+
+            if (appState.users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-icon">👥</div>
+                                <p>No registered users</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = appState.users.map(user => {
+                    const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+                    const lastLogin = user.lastLogin ? getTimeAgo(user.lastLogin) : 'Never';
+
+                    return `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div class="user-avatar-small">👤</div>
+                                    <strong>${user.displayName || 'User'}</strong>
+                                </div>
+                            </td>
+                            <td>${user.email}</td>
+                            <td>${createdDate}</td>
+                            <td>${lastLogin}</td>
+                            <td><span class="badge badge-resolved">Active</span></td>
+                            <td>
+                                <button class="card-action" style="padding: 0.5rem 1rem;">View</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Load History
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+
+            if (appState.emergencies.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📜</div>
+                        <p>No alert history</p>
+                    </div>
+                `;
+            } else {
+                historyList.innerHTML = appState.emergencies.map(alert => {
+                    const user = appState.users.find(u => u.uid === alert.userId);
+                    const statusClass = alert.status === 'active' ? 'critical' : 'resolved';
+                    const statusBadge = alert.status === 'active' ? 'badge-critical' : 'badge-resolved';
+                    const timeAgo = getTimeAgo(alert.timestamp);
+
+                    return `
+                        <div class="alert-item">
+                            <div class="alert-icon ${statusClass}">🚨</div>
+                            <div class="alert-content">
+                                <div class="alert-title">${user?.email || alert.userEmail || 'Unknown User'}</div>
+                                <div class="alert-meta">
+                                    <span class="badge ${statusBadge}">${alert.status || 'active'}</span>
+                                    ${alert.location ? `📍 Lat: ${alert.location.lat?.toFixed(6)}, Lng: ${alert.location.lng?.toFixed(6)}` : '📍 Location unavailable'}
+                                </div>
+                            </div>
+                            <div class="alert-time">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Refresh Functions
+        function refreshAlerts() {
+            showToast('Refreshing', 'Loading latest alerts...', 'success');
+            loadDashboardData();
+        }
+
+        function refreshUsers() {
+            showToast('Refreshing', 'Loading user data...', 'success');
+            loadDashboardData();
+        }
+
+        // Utility: Time Ago
+        function getTimeAgo(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+
+        // Toast Notification
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = `toast toast-${type} show`;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            if (appState.currentUser) {
+                loadDashboardData();
+            }
+        }, 30000);
+    </script>
+</body>
+
+</html>

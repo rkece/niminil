@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Connection Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .status {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .status.loading {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .info {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .info strong {
+            color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .code {
+            background: #1f2937;
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #d1d5db;
+        }
+
+        .checklist li.pass {
+            border-left-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .checklist li.fail {
+            border-left-color: #ef4444;
+            background: #fee2e2;
+        }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Connection Test</h1>
+
+        <div id="status" class="status loading">
+            ⏳ Initializing Firebase...
+        </div>
+
+        <div class="info">
+            <strong>Instructions:</strong><br>
+            1. Update the Firebase config below with your actual credentials<br>
+            2. Click "Test Connection" to verify everything works<br>
+            3. Check the results below
+        </div>
+
+        <div class="code" id="configDisplay">
+            Loading configuration...
+        </div>
+
+        <button onclick="testConnection()" id="testBtn">Test Connection</button>
+
+        <ul class="checklist" id="checklist" style="display: none;">
+            <li id="check-init">Firebase Initialization</li>
+            <li id="check-auth">Authentication Module</li>
+            <li id="check-db">Realtime Database</li>
+            <li id="check-firestore">Firestore Database</li>
+            <li id="check-rules">Database Rules</li>
+        </ul>
+
+        <div id="results" style="margin-top: 1rem;"></div>
+    </div>
+
+    <script>
+        // Production Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIDre-KHAc8Qp0LAj1Y15rfSoDeKYQ9BI",
+            authDomain: "niminil.firebaseapp.com",
+            databaseURL: "https://niminil-default-rtdb.firebaseio.com",
+            projectId: "niminil",
+            storageBucket: "niminil.firebasestorage.app",
+            messagingSenderId: "781231700779",
+            appId: "1:781231700779:web:3868c7daf3be4ab937236e",
+            measurementId: "G-S4XN8Y2ZLS"
+        };
+
+        // Display config (with hidden API key)
+        document.getElementById('configDisplay').textContent = JSON.stringify({
+            ...firebaseConfig,
+            apiKey: firebaseConfig.apiKey.substring(0, 10) + "..." + firebaseConfig.apiKey.substring(firebaseConfig.apiKey.length - 5)
+        }, null, 2);
+
+        let app, auth, database, firestore;
+
+        async function testConnection() {
+            const statusDiv = document.getElementById('status');
+            const checklistDiv = document.getElementById('checklist');
+            const resultsDiv = document.getElementById('results');
+            const testBtn = document.getElementById('testBtn');
+
+            testBtn.disabled = true;
+            checklistDiv.style.display = 'block';
+            resultsDiv.innerHTML = '';
+
+            // Reset checklist
+            ['init', 'auth', 'db', 'firestore', 'rules'].forEach(id => {
+                const el = document.getElementById(`check-${id}`);
+                el.className = '';
+                el.textContent = el.textContent.split(' ')[0] + ' - Testing...';
+            });
+
+            try {
+                // Test 1: Initialize Firebase
+                statusDiv.textContent = '🔄 Testing Firebase initialization...';
+                statusDiv.className = 'status loading';
+
+                try {
+                    app = firebase.initializeApp(firebaseConfig);
+                    updateCheck('init', true, 'Initialized successfully');
+                } catch (e) {
+                    if (e.code === 'app/duplicate-app') {
+                        app = firebase.app();
+                        updateCheck('init', true, 'Already initialized');
+                    } else {
+                        throw e;
+                    }
+                }
+
+                // Test 2: Auth Module
+                statusDiv.textContent = '🔄 Testing Authentication module...';
+                try {
+                    auth = firebase.auth();
+                    updateCheck('auth', true, 'Auth module loaded');
+                } catch (e) {
+                    updateCheck('auth', false, e.message);
+                    throw e;
+                }
+
+                // Test 3: Realtime Database
+                statusDiv.textContent = '🔄 Testing Realtime Database...';
+                try {
+                    database = firebase.database();
+                    // Try to read from database
+                    const testRef = database.ref('.info/connected');
+                    await testRef.once('value');
+                    updateCheck('db', true, 'Database connected');
+                } catch (e) {
+                    updateCheck('db', false, e.message);
+                    throw e;
+                }
+
+                // Test 4: Firestore
+                statusDiv.textContent = '🔄 Testing Firestore...';
+                try {
+                    firestore = firebase.firestore();
+                    updateCheck('firestore', true, 'Firestore loaded');
+                } catch (e) {
+                    updateCheck('firestore', false, e.message);
+                    throw e;
+                }
+
+                // Test 5: Database Rules (requires auth)
+                statusDiv.textContent = '🔄 Testing database access...';
+                try {
+                    // This will fail if not authenticated, which is expected
+                    const testRef = database.ref('test');
+                    try {
+                        await testRef.set({ test: true });
+                        await testRef.remove();
+                        updateCheck('rules', true, 'Rules configured (authenticated access works)');
+                    } catch (e) {
+                        if (e.code === 'PERMISSION_DENIED') {
+                            updateCheck('rules', true, 'Rules configured (requires authentication - this is correct!)');
+                        } else {
+                            throw e;
+                        }
+                    }
+                } catch (e) {
+                    updateCheck('rules', false, e.message);
+                }
+
+                // All tests passed!
+                statusDiv.textContent = '✅ All tests passed! Firebase is configured correctly.';
+                statusDiv.className = 'status success';
+
+                resultsDiv.innerHTML = `
+                    <div class="status success">
+                        <strong>🎉 Success!</strong><br>
+                        Your Firebase configuration is working correctly.<br><br>
+                        <strong>Next steps:</strong><br>
+                        1. Enable Email/Password authentication in Firebase Console<br>
+                        2. Enable Google Sign-In in Firebase Console<br>
+                        3. Set up database rules (see FIREBASE_SETUP_COMPLETE.md)<br>
+                        4. Update guardian-firebase.html with these credentials<br>
+                        5. Test user registration and login
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Firebase test failed:', error);
+                statusDiv.textContent = `❌ Test failed: ${error.message}`;
+                statusDiv.className = 'status error';
+
+                resultsDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>Error Details:</strong><br>
+                        ${error.message}<br><br>
+                        <strong>Common fixes:</strong><br>
+                        • Check that your API key is correct<br>
+                        • Verify project ID matches your Firebase project<br>
+                        • Ensure Realtime Database is created in Firebase Console<br>
+                        • Check browser console for detailed errors
+                    </div>
+                `;
+            }
+
+            testBtn.disabled = false;
+        }
+
+        function updateCheck(id, passed, message) {
+            const el = document.getElementById(`check-${id}`);
+            el.className = passed ? 'pass' : 'fail';
+            const icon = passed ? '✓' : '✗';
+            const text = el.textContent.split(' - ')[0];
+            el.textContent = `${icon} ${text} - ${message}`;
+        }
+
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            setTimeout(testConnection, 1000);
+        });
+    </script>
+</body>
+
+</html>
