@@ -4,14 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Guardian - Advanced Women Safety Protection System with real-time emergency response">
-    <title>Guardian - Women Safety Protection System</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Guardian Admin Portal - Women Safety Management</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.svg">
+
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -20,250 +28,160 @@
         }
 
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #13131a;
-            --bg-tertiary: #1a1a24;
-            --accent-primary: #ff3366;
-            --accent-secondary: #6366f1;
-            --accent-tertiary: #06b6d4;
-            --text-primary: #ffffff;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --border-color: #27272a;
+            --bg-dark: #0a0a0f;
+            --bg-card: #13131a;
+            --bg-sidebar: #0d0d12;
+            --accent-pink: #ff3366;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --border: #1f1f28;
             --success: #10b981;
             --warning: #f59e0b;
-            --error: #ef4444;
+            --danger: #ef4444;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: var(--bg-dark);
+            color: var(--text-white);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* Smooth Scrolling */
-        html {
-            scroll-behavior: smooth;
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--accent-pink);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-particle 20s infinite;
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
+        @keyframes float-particle {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.3;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-primary);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff1a4d;
-        }
-
-        /* Animated Background */
         .bg-gradient {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            opacity: 0.15;
-            background: radial-gradient(circle at 20% 50%, var(--accent-primary) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, var(--accent-secondary) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, var(--accent-tertiary) 0%, transparent 50%);
-            animation: gradientShift 15s ease infinite;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.4;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 51, 102, 0.1), transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.1), transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1), transparent 50%);
         }
 
-        @keyframes gradientShift {
-
-            0%,
-            100% {
-                transform: scale(1) rotate(0deg);
-            }
-
-            50% {
-                transform: scale(1.1) rotate(5deg);
-            }
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(10, 10, 15, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
+        .gradient-orb {
             position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-primary);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .user-status {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            filter: blur(120px);
+            animation: float 25s ease-in-out infinite;
         }
 
-        @keyframes pulse {
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-pink), transparent);
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-purple), transparent);
+            top: 50%;
+            right: -10%;
+            animation-delay: 8s;
+        }
+
+        .orb-3 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--accent-blue), transparent);
+            bottom: -20%;
+            left: 40%;
+            animation-delay: 15s;
+        }
+
+        @keyframes float {
 
             0%,
             100% {
-                opacity: 1;
-                transform: scale(1);
+                transform: translate(0, 0) scale(1);
             }
 
-            50% {
-                opacity: 0.5;
-                transform: scale(1.2);
+            33% {
+                transform: translate(60px, -60px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-60px, 60px) scale(0.9);
             }
         }
 
-        /* Hero Section */
-        .hero {
+        /* Login Page */
+        .login-page {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8rem 2rem 4rem;
+            padding: 2rem;
             position: relative;
+            z-index: 10;
         }
 
-        .hero-content {
-            max-width: 1400px;
+        .login-container {
+            max-width: 500px;
             width: 100%;
-            text-align: center;
-        }
-
-        .hero-tag {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background: rgba(255, 51, 102, 0.1);
-            border: 1px solid rgba(255, 51, 102, 0.3);
-            border-radius: 50px;
-            color: var(--accent-primary);
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 0.8s ease 0.2s backwards;
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 200% 200%;
-            animation: gradientFlow 5s ease infinite;
-        }
-
-        @keyframes gradientFlow {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            animation: fadeInUp 0.8s ease 0.4s backwards;
+            background: rgba(19, 19, 26, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(255, 51, 102, 0.1);
+            animation: fadeInUp 0.6s ease-out;
         }
 
         @keyframes fadeInUp {
@@ -278,144 +196,398 @@
             }
         }
 
-        .cta-buttons {
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            border-radius: 20px;
             display: flex;
-            gap: 1.5rem;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s ease 0.6s backwards;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.4);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 10px 40px rgba(255, 51, 102, 0.4);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow: 0 10px 60px rgba(255, 51, 102, 0.6);
+                transform: scale(1.05);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 4px rgba(255, 51, 102, 0.1);
         }
 
         .btn {
-            padding: 1rem 2.5rem;
+            padding: 1.25rem 2rem;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
             border: none;
-            text-decoration: none;
-            display: inline-block;
+            width: 100%;
+            transition: all 0.3s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), #ff1a4d);
+            background: linear-gradient(135deg, var(--accent-pink), #ff1a4d);
             color: white;
-            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.3);
+            box-shadow: 0 20px 40px rgba(255, 51, 102, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 51, 102, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px rgba(255, 51, 102, 0.5);
         }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
             color: white;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
         }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--accent-primary);
-        }
-
-        /* Dashboard Section */
-        .dashboard {
-            padding: 4rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-tag {
-            color: var(--accent-primary);
-            font-weight: 600;
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            color: var(--text-gray);
             font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
         }
 
-        .section-title {
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Admin Layout */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h2 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .section-description {
-            color: var(--text-secondary);
-            font-size: 1.125rem;
-            max-width: 600px;
-            margin: 0 auto;
+        .sidebar-logo p {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            margin-top: 0.25rem;
         }
 
-        /* Grid Layout */
-        .grid {
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            padding: 0.75rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--text-white);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(255, 51, 102, 0.2), transparent);
+            color: var(--accent-pink);
+            border-left: 3px solid var(--accent-pink);
+        }
+
+        .menu-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem 3rem;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .btn-logout {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            color: var(--accent-pink);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 51, 102, 0.2);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
         }
 
-        /* Card Styles */
-        .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+        .stat-card {
+            background: rgba(19, 19, 26, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 2rem;
-            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .card::before {
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 51, 102, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 51, 102, 0.2);
+        }
+
+        .stat-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), rgba(99, 102, 241, 0.05));
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.pink {
+            background: rgba(255, 51, 102, 0.2);
+        }
+
+        .stat-icon.purple {
+            background: rgba(168, 85, 247, 0.2);
+        }
+
+        .stat-icon.blue {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .stat-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-trend {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .trend-up {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .trend-down {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(19, 19, 26, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-8px);
-            border-color: var(--accent-primary);
-            box-shadow: 0 20px 60px rgba(255, 51, 102, 0.2);
-        }
-
-        .card:hover::before {
-            opacity: 1;
+            border-color: rgba(255, 51, 102, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         .card-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.3);
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
         }
 
         .card-title {
@@ -424,286 +596,48 @@
             font-weight: 700;
         }
 
-        .card-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* SOS Button */
-        .sos-container {
-            text-align: center;
-            padding: 3rem 0;
-        }
-
-        .sos-button {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-primary), #ff1a4d);
-            border: none;
-            color: white;
-            font-size: 3.5rem;
-            font-weight: 900;
+        .card-action {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-gray);
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 20px 60px rgba(255, 51, 102, 0.4),
-                inset 0 -10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sos-button::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0% {
-                transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            }
-
-            100% {
-                transform: translateX(100%) translateY(100%) rotate(45deg);
-            }
-        }
-
-        .sos-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 25px 70px rgba(255, 51, 102, 0.6);
-        }
-
-        .sos-button:active {
-            transform: scale(0.95);
-        }
-
-        .sos-button.active {
-            animation: sosActive 1s infinite;
-        }
-
-        @keyframes sosActive {
-
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7);
-            }
-
-            50% {
-                box-shadow: 0 0 0 40px rgba(255, 51, 102, 0);
-            }
-        }
-
-        .sos-status {
-            margin-top: 2rem;
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-        }
-
-        /* Status Badge */
-        .status-badge {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
             font-size: 0.875rem;
-            margin-top: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.3s;
         }
 
-        .badge-safe {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+        .card-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-white);
         }
 
-        .badge-alert {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .badge-waiting {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        /* Location Display */
-        .location-info {
-            background: rgba(99, 102, 241, 0.05);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .location-info p {
-            margin: 0.75rem 0;
-            font-size: 1rem;
-        }
-
-        .location-info strong {
-            color: var(--accent-secondary);
-        }
-
-        /* Input Styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.1);
-        }
-
-        /* Contact List */
-        .contact-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .contact-item:hover {
-            border-color: var(--accent-primary);
-            transform: translateX(5px);
-        }
-
-        .contact-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .contact-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .contact-details {
+        /* Alert List */
+        .alert-list {
             display: flex;
             flex-direction: column;
-        }
-
-        .contact-name {
-            font-weight: 600;
-            font-size: 1.125rem;
-        }
-
-        .contact-phone {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .btn-remove {
-            padding: 0.5rem 1.25rem;
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-remove:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: scale(1.05);
-        }
-
-        /* Help Centers */
-        .help-center-item {
-            padding: 1.5rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-secondary);
-            border-radius: 16px;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .help-center-item:hover {
-            border-left-color: var(--accent-primary);
-            transform: translateX(5px);
-        }
-
-        .help-center-name {
-            font-weight: 700;
-            font-size: 1.125rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .help-center-meta {
-            display: flex;
-            gap: 1.5rem;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.5rem;
-            min-width: 350px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            transform: translateX(500px);
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
             gap: 1rem;
         }
 
-        .toast.show {
-            transform: translateX(0);
+        .alert-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
 
-        .toast-icon {
+        .alert-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px) scale(1.02);
+            border-color: rgba(255, 51, 102, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.15);
+        }
+
+        .alert-icon {
             width: 50px;
             height: 50px;
             border-radius: 12px;
@@ -711,44 +645,178 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
+            flex-shrink: 0;
         }
 
-        .toast-success .toast-icon {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success);
-        }
-
-        .toast-error .toast-icon {
+        .alert-icon.critical {
             background: rgba(239, 68, 68, 0.2);
-            color: var(--error);
+            color: var(--danger);
         }
 
-        .toast-warning .toast-icon {
+        .alert-icon.warning {
             background: rgba(245, 158, 11, 0.2);
             color: var(--warning);
         }
 
-        .toast-content {
+        .alert-icon.resolved {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .alert-content {
             flex: 1;
         }
 
-        .toast-title {
-            font-weight: 700;
-            font-size: 1rem;
+        .alert-title {
+            font-weight: 600;
             margin-bottom: 0.25rem;
         }
 
-        .toast-message {
-            color: var(--text-secondary);
+        .alert-meta {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .badge-active {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-resolved {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        /* User List */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
             font-size: 0.875rem;
         }
 
-        /* Loading Spinner */
+        .user-email {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-online {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-offline {
+            background: var(--text-gray);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-gray);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading */
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 51, 102, 0.2);
-            border-top-color: var(--accent-primary);
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 51, 102, 0.2);
+            border-top-color: var(--accent-pink);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 2rem auto;
@@ -760,735 +828,948 @@
             }
         }
 
-        /* Auth Section */
-        .auth-container {
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 3rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .auth-header h2 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .auth-header p {
-            color: var(--text-secondary);
-        }
-
-        .divider {
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            min-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            transform: translateX(500px);
+            transition: transform 0.5s;
+            z-index: 3000;
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin: 2rem 0;
-            color: var(--text-muted);
-            font-size: 0.875rem;
         }
 
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border-color);
+        .toast.show {
+            transform: translateX(0);
         }
 
-        /* Hidden Class */
+        .toast-success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-warning {
+            border-left: 4px solid var(--warning);
+        }
+
         .hidden {
             display: none !important;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero {
-                padding: 6rem 1rem 2rem;
-            }
-
-            .grid {
+        @media (max-width: 1200px) {
+            .content-grid {
                 grid-template-columns: 1fr;
             }
-
-            .sos-button {
-                width: 200px;
-                height: 200px;
-                font-size: 2.5rem;
-            }
-
-            .toast {
-                right: 1rem;
-                left: 1rem;
-                min-width: auto;
-            }
         }
 
-        /* Scroll Indicator */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            100% {
-                transform: translateX(-50%) translateY(0);
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
             }
 
-            50% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-        }
-
-        .scroll-indicator span {
-            display: block;
-            width: 30px;
-            height: 50px;
-            border: 2px solid var(--accent-primary);
-            border-radius: 25px;
-            position: relative;
-        }
-
-        .scroll-indicator span::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            width: 6px;
-            height: 6px;
-            background: var(--accent-primary);
-            border-radius: 50%;
-            transform: translateX(-50%);
-            animation: scroll 2s infinite;
-        }
-
-        @keyframes scroll {
-            0% {
-                top: 10px;
-                opacity: 1;
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
             }
 
-            100% {
-                top: 30px;
-                opacity: 0;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="bg-gradient"></div>
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
 
-    <!-- Navigation -->
-    <nav id="nav">
-        <div class="nav-container">
-            <div class="logo">
-                <div class="logo-icon">🛡️</div>
-                Guardian
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#about">About</a></li>
-            </ul>
-            <div class="user-status">
-                <div class="status-indicator"></div>
-                <span id="userEmail" style="color: var(--text-secondary); font-size: 0.875rem;">Not signed in</span>
-            </div>
-        </div>
-    </nav>
+    <div class="bg-gradient">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <div class="hero-tag">🚨 Advanced Safety System</div>
-            <h1>
-                Your Safety,<br>
-                <span class="gradient-text">Our Priority</span>
-            </h1>
-            <p>
-                Real-time emergency response with GPS tracking, instant alerts, and hardware integration.
-                Because every second counts when it matters most.
-            </p>
-            <div class="cta-buttons">
-                <button class="btn btn-primary" onclick="showSection('auth')">Get Started</button>
-                <button class="btn btn-secondary" onclick="showSection('dashboard')">View Dashboard</button>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <span></span>
-        </div>
-    </section>
-
-    <!-- Auth Section -->
-    <section id="auth" class="dashboard hidden">
-        <div class="auth-container">
-            <div class="auth-header">
-                <h2>Welcome to Guardian</h2>
-                <p>Sign in to access your safety dashboard</p>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">🛡️</div>
+                <h1>Guardian Admin Portal</h1>
+                <p style="color: var(--text-gray);">Women Safety Management System</p>
             </div>
 
-            <button class="btn btn-primary" onclick="signInWithGoogle()"
-                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        fill="#4285F4" />
-                    <path
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        fill="#34A853" />
-                    <path
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                        fill="#FBBC05" />
-                    <path
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                        fill="#EA4335" />
-                </svg>
+            <button class="btn btn-primary" onclick="loginWithGoogle()" style="margin-bottom: 1rem;">
                 Continue with Google
             </button>
 
             <div class="divider">or</div>
 
-            <form id="emailAuthForm" onsubmit="signInWithEmail(event)">
+            <form onsubmit="loginWithEmail(event)">
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="your@email.com" required>
+                    <label class="form-label">Admin Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="admin@guardian.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn btn-secondary" style="width: 100%;">Sign In</button>
+                <button type="submit" class="btn btn-secondary">Sign In</button>
             </form>
-        </div>
-    </section>
-
-    <!-- Dashboard Section -->
-    <section id="dashboard" class="dashboard hidden">
-        <div class="section-header">
-            <div class="section-tag">Emergency Response</div>
-            <h2 class="section-title">Safety Dashboard</h2>
-            <p class="section-description">
-                Monitor your safety status, manage emergency contacts, and access instant help
-            </p>
-        </div>
-
-        <!-- SOS Emergency Panel -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon">🚨</div>
-                <h3 class="card-title">Emergency SOS</h3>
-            </div>
-            <div class="card-content">
-                <div class="sos-container">
-                    <button class="sos-button" id="sosButton" onclick="triggerSOS()">
-                        SOS
-                    </button>
-                    <div class="sos-status" id="sosStatus">Press SOS in case of emergency</div>
-                    <div class="status-badge badge-safe" id="statusBadge">System Ready</div>
-                    <div id="locationDisplay" class="hidden"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Grid Cards -->
-        <div class="grid">
-            <!-- Hardware Device -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">⌚</div>
-                    <h3 class="card-title">Hardware Device</h3>
-                </div>
-                <div class="card-content">
-                    <div
-                        style="display: flex; align-items: center; gap: 1rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px;">
-                        <div class="status-indicator"></div>
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 0.25rem;">Device Connected</div>
-                            <div style="color: var(--text-secondary); font-size: 0.875rem;">ESP32 Panic Button Active
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" onclick="simulateHardwarePanic()"
-                        style="width: 100%; margin-top: 1.5rem;">
-                        Simulate Hardware Panic
-                    </button>
-                </div>
-            </div>
-
-            <!-- Live Location -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">📍</div>
-                    <h3 class="card-title">Live Location</h3>
-                </div>
-                <div class="card-content">
-                    <div id="currentLocation">
-                        <p style="color: var(--text-secondary);">Location will be fetched when SOS is triggered</p>
-                    </div>
-                    <button class="btn btn-secondary" onclick="fetchLocation()"
-                        style="width: 100%; margin-top: 1.5rem;">
-                        Fetch Current Location
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Emergency Contacts -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">📞</div>
-                <h3 class="card-title">Emergency Contacts</h3>
-            </div>
-            <div class="card-content">
-                <div id="contactList"></div>
-                <form onsubmit="addContact(event)" style="margin-top: 2rem;">
-                    <div class="form-group">
-                        <label for="contactName">Contact Name</label>
-                        <input type="text" id="contactName" placeholder="Enter name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactPhone">Phone Number</label>
-                        <input type="tel" id="contactPhone" placeholder="Enter phone number" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Add Contact</button>
-                </form>
-                <div
-                    style="margin-top: 2rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-left: 4px solid var(--warning); border-radius: 12px;">
-                    <div style="font-weight: 700; color: var(--warning); margin-bottom: 0.5rem;">📱 Message Preview
-                    </div>
-                    <div style="color: var(--text-secondary); font-size: 0.875rem; font-style: italic;"
-                        id="messagePreview">
-                        "I'm in danger. My location is: [GPS coordinates will be inserted here]"
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Nearby Help Centers -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🏥</div>
-                <h3 class="card-title">Nearby Help Centers</h3>
-            </div>
-            <div class="card-content">
-                <div id="helpCenterList"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">
-        <div class="toast-icon" id="toastIcon"></div>
-        <div class="toast-content">
-            <div class="toast-title" id="toastTitle"></div>
-            <div class="toast-message" id="toastMessage"></div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-layout hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>Guardian</h2>
+                <p>Admin Portal</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" onclick="showPage('dashboard')">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="menu-item" onclick="showPage('alerts')">
+                    <span class="menu-icon">🚨</span>
+                    <span>Active Alerts</span>
+                </li>
+                <li class="menu-item" onclick="showPage('users')">
+                    <span class="menu-icon">👥</span>
+                    <span>Registered Users</span>
+                </li>
+                <li class="menu-item" onclick="showPage('devices')">
+                    <span class="menu-icon">📱</span>
+                    <span>Devices</span>
+                </li>
+                <li class="menu-item" onclick="showPage('history')">
+                    <span class="menu-icon">📜</span>
+                    <span>Alert History</span>
+                </li>
+                <li class="menu-item" onclick="showPage('analytics')">
+                    <span class="menu-icon">📈</span>
+                    <span>Analytics</span>
+                </li>
+                <li class="menu-item" onclick="showPage('settings')">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </li>
+                <li class="menu-item" onclick="showPage('simulator')">
+                    <span class="menu-icon">🎮</span>
+                    <span>Simulator</span>
+                </li>
+            </ul>
+        </aside>
 
-        // Firebase Configuration - REPLACE WITH YOUR CONFIG
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page-content">
+                <div class="top-bar">
+                    <h1 class="page-title">Dashboard Overview</h1>
+                    <div class="user-menu">
+                        <div class="user-avatar">👤</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.875rem;" id="adminName">Admin</div>
+                            <div style="font-size: 0.75rem; color: var(--text-gray);" id="adminEmail"></div>
+                        </div>
+                        <button class="btn-logout" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon pink">🚨</div>
+                        <div class="stat-value" id="activeAlerts">0</div>
+                        <div class="stat-label">Active Alerts</div>
+                        <div class="stat-trend trend-down">↓ 12% from last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">👥</div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Registered Users</div>
+                        <div class="stat-trend trend-up">↑ 8% from last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📱</div>
+                        <div class="stat-value" id="activeDevices">0</div>
+                        <div class="stat-label">Active Devices</div>
+                        <div class="stat-trend trend-up">↑ 5% from last week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-value" id="resolvedToday">0</div>
+                        <div class="stat-label">Resolved Today</div>
+                        <div class="stat-trend trend-up">↑ 15% from yesterday</div>
+                    </div>
+                </div>
+
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <!-- Recent Alerts -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Alerts</h3>
+                            <button class="card-action" onclick="showPage('alerts')">View All →</button>
+                        </div>
+                        <div id="recentAlertsList" class="alert-list">
+                            <div class="empty-state">
+                                <div class="empty-icon">🔔</div>
+                                <p>No recent alerts</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Users -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Active Users</h3>
+                            <button class="card-action" onclick="showPage('users')">View All →</button>
+                        </div>
+                        <div id="activeUsersList" class="user-list">
+                            <div class="empty-state">
+                                <div class="empty-icon">👥</div>
+                                <p>No active users</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Page -->
+            <div id="alertsPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Active Alerts</h1>
+                    <div class="user-menu">
+                        <button class="card-action" onclick="refreshAlerts()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div id="allAlertsList" class="alert-list">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div id="usersPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Registered Users</h1>
+                    <div class="user-menu">
+                        <button class="card-action" onclick="refreshUsers()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Registered</th>
+                                    <th>Last Login</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Devices Page -->
+            <div id="devicesPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Registered Devices</h1>
+                </div>
+                <div class="card">
+                    <div class="empty-state">
+                        <div class="empty-icon">📱</div>
+                        <p>Device management coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Page -->
+            <div id="historyPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Alert History</h1>
+                </div>
+                <div class="card">
+                    <div id="historyList" class="alert-list">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analyticsPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Analytics & Reports</h1>
+                </div>
+                <div class="card">
+                    <div class="empty-state">
+                        <div class="empty-icon">📈</div>
+                        <p>Analytics dashboard coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">System Settings</h1>
+                </div>
+                <div class="card">
+                    <div class="empty-state">
+                        <div class="empty-icon">⚙️</div>
+                        <p>Settings panel coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulator Page -->
+            <div id="simulatorPage" class="page-content hidden">
+                <div class="top-bar">
+                    <h1 class="page-title">Device Simulator</h1>
+                </div>
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: rgba(239, 68, 68, 0.2); color: var(--danger);">🚨
+                            </div>
+                            <h2 class="card-title">Virtual SOS Device</h2>
+                        </div>
+                        <div style="text-align: center; padding: 2rem;">
+                            <button id="simSosButton" onclick="simulateSOS()" style="
+                                width: 200px;
+                                height: 200px;
+                                border-radius: 50%;
+                                background: linear-gradient(135deg, var(--danger), #991b1b);
+                                border: 8px solid rgba(239, 68, 68, 0.2);
+                                color: white;
+                                font-size: 2.5rem;
+                                font-weight: 900;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+                            ">SOS</button>
+                            <p style="margin-top: 1.5rem; color: var(--text-gray);">Click to simulate a real user
+                                emergency</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Simulation Settings</h3>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Simulated User Name</label>
+                            <input type="text" class="form-input" id="simUserName" value="Test User">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Simulated Location</label>
+                            <select class="form-input" id="simLocation" style="
+                                width: 100%;
+                                padding: 1.25rem;
+                                background: rgba(255, 255, 255, 0.03);
+                                border: 1px solid var(--border);
+                                border-radius: 12px;
+                                color: var(--text-white);
+                                font-size: 1rem;
+                            ">
+                                <option value="bangalore">Bangalore (Default)</option>
+                                <option value="delhi">Delhi</option>
+                                <option value="mumbai">Mumbai</option>
+                                <option value="random">Random Jitter</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" onclick="simulateHardwarePanic()">Simulate Hardware
+                            Panic</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div style="font-weight: 700;" id="toastTitle">Success</div>
+        <div style="color: var(--text-gray); font-size: 0.875rem;" id="toastMessage">Operation completed</div>
+    </div>
+
+    <script>
+        // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAIDre-KHAc8Qp0LAj1Y15rfSoDeKYQ9BI",
+            authDomain: "niminil.firebaseapp.com",
+            databaseURL: "https://niminil-default-rtdb.firebaseio.com",
+            projectId: "niminil",
+            storageBucket: "niminil.firebasestorage.app",
+            messagingSenderId: "781231700779",
+            appId: "1:781231700779:web:3868c7daf3be4ab937236e",
+            measurementId: "G-S4XN8Y2ZLS"
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const firestore = firebase.firestore();
 
-        // Make available globally
-        window.auth = auth;
-        window.db = db;
-        window.GoogleAuthProvider = GoogleAuthProvider;
-        window.signInWithPopup = signInWithPopup;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.getDocs = getDocs;
-        window.deleteDoc = deleteDoc;
-        window.doc = doc;
-        window.serverTimestamp = serverTimestamp;
-
-        // Auth State Observer
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('userEmail').textContent = user.email;
-                showToast('Welcome!', `Signed in as ${user.email}`, 'success');
-                loadUserData();
-            } else {
-                document.getElementById('userEmail').textContent = 'Not signed in';
-            }
-        });
-    </script>
-
-    <script>
-        // Application State
+        // App State
         const appState = {
-            currentLocation: null,
-            emergencyContacts: [],
-            sosActive: false,
-            helpCenters: [
-                { name: "City Police Station", type: "Police", distance: "0.8 km", phone: "100" },
-                { name: "Women's Helpline", type: "NGO", distance: "1.2 km", phone: "1091" },
-                { name: "City General Hospital", type: "Hospital", distance: "1.5 km", phone: "108" },
-                { name: "Women Safety Cell", type: "Police", distance: "2.1 km", phone: "1091" },
-                { name: "Emergency Medical Services", type: "Hospital", distance: "2.3 km", phone: "102" }
-            ]
+            currentUser: null,
+            currentPage: 'dashboard',
+            alerts: [],
+            users: [],
+            emergencies: []
         };
 
-        // Initialize App
-        function initApp() {
-            renderHelpCenters();
-            renderContacts();
+        // Save/Update User Profile in Realtime Database
+        async function saveUserProfile(user) {
+            if (!user) return;
+
+            try {
+                const userRef = database.ref('users/' + user.uid);
+                const profileData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || user.email.split('@')[0],
+                    photoURL: user.photoURL || null,
+                    lastLogin: firebase.database.ServerValue.TIMESTAMP,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                // Check if user exists
+                const snapshot = await userRef.once('value');
+                if (!snapshot.exists()) {
+                    // New user - add createdAt
+                    profileData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+                    console.log('Creating new user profile in database');
+                }
+
+                // Save to Realtime Database
+                await userRef.update(profileData);
+                console.log('User profile saved successfully to Realtime Database');
+
+                // Also save to Firestore for redundancy
+                await firestore.collection('users').doc(user.uid).set({
+                    ...profileData,
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: snapshot.exists() ?
+                        (await firestore.collection('users').doc(user.uid).get()).data()?.createdAt || firebase.firestore.FieldValue.serverTimestamp() :
+                        firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                return true;
+            } catch (error) {
+                console.error('Error saving user profile:', error);
+                showToast('Warning', 'Profile saved locally, but database sync failed', 'warning');
+                return false;
+            }
         }
 
-        // Section Navigation
-        function showSection(sectionId) {
-            document.querySelectorAll('section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
+        // Auth State Observer
+        auth.onAuthStateChanged(async (user) => {
+            console.log('Auth state changed:', user ? user.email : 'logged out');
 
-            if (sectionId !== 'home') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (user) {
+                try {
+                    appState.currentUser = user;
+
+                    // Save user profile to database (non-blocking)
+                    saveUserProfile(user).catch(err => {
+                        console.error('Failed to save profile, but continuing:', err);
+                    });
+
+                    console.log('Updating UI elements...');
+                    document.getElementById('adminName').textContent = user.displayName || 'Admin';
+                    document.getElementById('adminEmail').textContent = user.email;
+
+                    console.log('Hiding login page...');
+                    document.getElementById('loginPage').classList.add('hidden');
+
+                    console.log('Showing admin dashboard...');
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+
+                    console.log('Loading dashboard data...');
+                    await loadDashboardData();
+
+                    console.log('Dashboard loaded successfully!');
+                    showToast('Welcome!', `Logged in as ${user.email}`, 'success');
+                } catch (error) {
+                    console.error('Error in auth state handler:', error);
+                    showToast('Error', 'Failed to load dashboard: ' + error.message, 'error');
+
+                    // Still try to show the dashboard even if there's an error
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+                }
+            } else {
+                appState.currentUser = null;
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('adminDashboard').classList.add('hidden');
             }
+        });
+
+        // Google Login
+        async function loginWithGoogle() {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('profile');
+                provider.addScope('email');
+
+                console.log('Attempting Google sign-in...');
+                await auth.signInWithPopup(provider);
+            } catch (error) {
+                console.error('Google login error:', error.code, error.message);
+                let errorMessage = error.message;
+                if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Popup was blocked. Please allow popups for this site.';
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Sign-in was cancelled.';
+                }
+                showToast('Login Failed', errorMessage, 'error');
+            }
+        }
+
+        // Email Login
+        async function loginWithEmail(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    const shouldCreate = confirm(`No account found for ${email}.\n\nCreate admin account?`);
+                    if (shouldCreate) {
+                        try {
+                            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                            await userCredential.user.updateProfile({
+                                displayName: 'Admin'
+                            });
+                            showToast('Account Created', 'Admin account created successfully!', 'success');
+                        } catch (createError) {
+                            showToast('Error', createError.message, 'error');
+                        }
+                    }
+                } else {
+                    showToast('Login Failed', error.message, 'error');
+                }
+            }
+        }
+
+        // Logout
+        function logout() {
+            auth.signOut();
+            showToast('Goodbye', 'Logged out successfully', 'success');
+        }
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            console.log('Starting to load dashboard data...');
+            try {
+                console.log('Loading users from database...');
+                // Load users
+                const usersSnapshot = await database.ref('users').once('value');
+                const usersData = usersSnapshot.val() || {};
+                appState.users = Object.keys(usersData).map(uid => ({
+                    uid,
+                    ...usersData[uid]
+                }));
+                console.log(`Loaded ${appState.users.length} users`);
+
+                console.log('Loading emergencies from database...');
+                // Load emergencies
+                const emergenciesSnapshot = await database.ref('emergencies').once('value');
+                const emergenciesData = emergenciesSnapshot.val() || {};
+                appState.emergencies = [];
+
+                Object.keys(emergenciesData).forEach(userId => {
+                    const userEmergencies = emergenciesData[userId];
+                    Object.keys(userEmergencies).forEach(emergencyId => {
+                        appState.emergencies.push({
+                            id: emergencyId,
+                            userId,
+                            ...userEmergencies[emergencyId]
+                        });
+                    });
+                });
+                console.log(`Loaded ${appState.emergencies.length} emergencies`);
+
+                // Sort by timestamp
+                appState.emergencies.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                console.log('Updating dashboard UI...');
+                updateDashboard();
+                console.log('Dashboard data loaded successfully!');
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showToast('Warning', 'Some data failed to load. Dashboard may be incomplete.', 'warning');
+
+                // Still try to update with whatever data we have
+                try {
+                    updateDashboard();
+                } catch (updateError) {
+                    console.error('Error updating dashboard:', updateError);
+                }
+            }
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            // Update stats
+            const activeAlerts = appState.emergencies.filter(e => e.status === 'active').length;
+            const resolvedToday = appState.emergencies.filter(e => {
+                const today = new Date().setHours(0, 0, 0, 0);
+                const emergencyDate = new Date(e.timestamp).setHours(0, 0, 0, 0);
+                return e.status === 'resolved' && emergencyDate === today;
+            }).length;
+
+            document.getElementById('activeAlerts').textContent = activeAlerts;
+            document.getElementById('totalUsers').textContent = appState.users.length;
+            document.getElementById('activeDevices').textContent = appState.users.length; // Assuming 1 device per user
+            document.getElementById('resolvedToday').textContent = resolvedToday;
+
+            // Update recent alerts
+            const recentAlerts = appState.emergencies.slice(0, 5);
+            const alertsList = document.getElementById('recentAlertsList');
+
+            if (recentAlerts.length === 0) {
+                alertsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔔</div>
+                        <p>No recent alerts</p>
+                    </div>
+                `;
+            } else {
+                alertsList.innerHTML = recentAlerts.map(alert => {
+                    const user = appState.users.find(u => u.uid === alert.userId);
+                    const statusClass = alert.status === 'active' ? 'critical' : 'resolved';
+                    const statusBadge = alert.status === 'active' ? 'badge-critical' : 'badge-resolved';
+                    const timeAgo = getTimeAgo(alert.timestamp);
+
+                    return `
+                        <div class="alert-item">
+                            <div class="alert-icon ${statusClass}">🚨</div>
+                            <div class="alert-content">
+                                <div class="alert-title">${user?.email || alert.userEmail || 'Unknown User'}</div>
+                                <div class="alert-meta">
+                                    <span class="badge ${statusBadge}">${alert.status || 'active'}</span>
+                                    ${alert.location ? `📍 Lat: ${alert.location.lat?.toFixed(4)}, Lng: ${alert.location.lng?.toFixed(4)}` : '📍 Location unavailable'}
+                                </div>
+                            </div>
+                            <div class="alert-time">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Update active users
+            const activeUsers = appState.users.slice(0, 5);
+            const usersList = document.getElementById('activeUsersList');
+
+            if (activeUsers.length === 0) {
+                usersList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <p>No registered users</p>
+                    </div>
+                `;
+            } else {
+                usersList.innerHTML = activeUsers.map(user => `
+                    <div class="user-item">
+                        <div class="user-avatar-small">👤</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.displayName || 'User'}</div>
+                            <div class="user-email">${user.email}</div>
+                        </div>
+                        <div class="status-dot status-online"></div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Show Page
+        function showPage(pageName) {
+            // Update menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+
+            // Show selected page
+            const pageMap = {
+                'dashboard': 'dashboardPage',
+                'alerts': 'alertsPage',
+                'users': 'usersPage',
+                'devices': 'devicesPage',
+                'history': 'historyPage',
+                'analytics': 'analyticsPage',
+                'settings': 'settingsPage',
+                'simulator': 'simulatorPage'
+            };
+
+            const pageId = pageMap[pageName];
+            if (pageId) {
+                document.getElementById(pageId).classList.remove('hidden');
+                appState.currentPage = pageName;
+
+                // Load page-specific data
+                if (pageName === 'alerts') loadAllAlerts();
+                if (pageName === 'users') loadAllUsers();
+                if (pageName === 'history') loadHistory();
+            }
+        }
+
+        // Load All Alerts
+        function loadAllAlerts() {
+            const alertsList = document.getElementById('allAlertsList');
+            const activeAlerts = appState.emergencies.filter(e => e.status === 'active');
+
+            if (activeAlerts.length === 0) {
+                alertsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">✅</div>
+                        <p>No active alerts - All clear!</p>
+                    </div>
+                `;
+            } else {
+                alertsList.innerHTML = activeAlerts.map(alert => {
+                    const user = appState.users.find(u => u.uid === alert.userId);
+                    const timeAgo = getTimeAgo(alert.timestamp);
+
+                    return `
+                        <div class="alert-item">
+                            <div class="alert-icon critical">🚨</div>
+                            <div class="alert-content">
+                                <div class="alert-title">${user?.email || alert.userEmail || 'Unknown User'}</div>
+                                <div class="alert-meta">
+                                    <span class="badge badge-critical">ACTIVE</span>
+                                    ${alert.location ? `📍 Lat: ${alert.location.lat?.toFixed(6)}, Lng: ${alert.location.lng?.toFixed(6)}` : '📍 Location unavailable'}
+                                </div>
+                            </div>
+                            <div class="alert-time">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Load All Users
+        function loadAllUsers() {
+            const tbody = document.getElementById('usersTableBody');
+
+            if (appState.users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-icon">👥</div>
+                                <p>No registered users</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = appState.users.map(user => {
+                    const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+                    const lastLogin = user.lastLogin ? getTimeAgo(user.lastLogin) : 'Never';
+
+                    return `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div class="user-avatar-small">👤</div>
+                                    <strong>${user.displayName || 'User'}</strong>
+                                </div>
+                            </td>
+                            <td>${user.email}</td>
+                            <td>${createdDate}</td>
+                            <td>${lastLogin}</td>
+                            <td><span class="badge badge-resolved">Active</span></td>
+                            <td>
+                                <button class="card-action" style="padding: 0.5rem 1rem;">View</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Load History
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+
+            if (appState.emergencies.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📜</div>
+                        <p>No alert history</p>
+                    </div>
+                `;
+            } else {
+                historyList.innerHTML = appState.emergencies.map(alert => {
+                    const user = appState.users.find(u => u.uid === alert.userId);
+                    const statusClass = alert.status === 'active' ? 'critical' : 'resolved';
+                    const statusBadge = alert.status === 'active' ? 'badge-critical' : 'badge-resolved';
+                    const timeAgo = getTimeAgo(alert.timestamp);
+
+                    return `
+                        <div class="alert-item">
+                            <div class="alert-icon ${statusClass}">🚨</div>
+                            <div class="alert-content">
+                                <div class="alert-title">${user?.email || alert.userEmail || 'Unknown User'}</div>
+                                <div class="alert-meta">
+                                    <span class="badge ${statusBadge}">${alert.status || 'active'}</span>
+                                    ${alert.location ? `📍 Lat: ${alert.location.lat?.toFixed(6)}, Lng: ${alert.location.lng?.toFixed(6)}` : '📍 Location unavailable'}
+                                </div>
+                            </div>
+                            <div class="alert-time">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Refresh Functions
+        function refreshAlerts() {
+            showToast('Refreshing', 'Loading latest alerts...', 'success');
+            loadDashboardData();
+        }
+
+        function refreshUsers() {
+            showToast('Refreshing', 'Loading user data...', 'success');
+            loadDashboardData();
+        }
+
+        // Utility: Time Ago
+        function getTimeAgo(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
         }
 
         // Toast Notification
         function showToast(title, message, type = 'success') {
             const toast = document.getElementById('toast');
-            const toastIcon = document.getElementById('toastIcon');
-            const toastTitle = document.getElementById('toastTitle');
-            const toastMessage = document.getElementById('toastMessage');
+            toast.className = `toast toast-${type} show`;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
 
-            toast.className = `toast toast-${type}`;
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            if (appState.currentUser) {
+                loadDashboardData();
+            }
+        }, 30000);
 
-            const icons = {
-                success: '✓',
-                error: '✕',
-                warning: '⚠'
+        // Simulation Logic
+        async function simulateSOS() {
+            const btn = document.getElementById('simSosButton');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = 'scale(1)', 100);
+
+            const userName = document.getElementById('simUserName').value || 'Test User';
+            const locationType = document.getElementById('simLocation').value;
+
+            let lat = 12.9716;
+            let lng = 77.5946;
+
+            if (locationType === 'delhi') { lat = 28.6139; lng = 77.2090; }
+            if (locationType === 'mumbai') { lat = 19.0760; lng = 72.8777; }
+            if (locationType === 'random') {
+                lat += (Math.random() - 0.5) * 0.1;
+                lng += (Math.random() - 0.5) * 0.1;
+            }
+
+            const alertData = {
+                userId: 'SIM-' + Date.now(),
+                userEmail: userName.toLowerCase().replace(' ', '.') + '@example.com',
+                userName: userName,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                status: 'active',
+                deviceType: 'Virtual Simulator',
+                location: { lat, lng },
+                details: 'SOS triggered via Admin Simulator'
             };
-            toastIcon.textContent = icons[type];
-
-            toastTitle.textContent = title;
-            toastMessage.textContent = message;
-
-            toast.classList.add('show');
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
-        }
-
-        // Authentication Functions
-        async function signInWithGoogle() {
-            try {
-                const provider = new window.GoogleAuthProvider();
-                await window.signInWithPopup(window.auth, provider);
-                showSection('dashboard');
-            } catch (error) {
-                showToast('Error', error.message, 'error');
-            }
-        }
-
-        async function signInWithEmail(event) {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
 
             try {
-                await window.signInWithEmailAndPassword(window.auth, email, password);
-                showSection('dashboard');
+                // Write to Realtime Database
+                await database.ref('emergencies').push(alertData);
+                showToast('Alert Sent', 'Simulated emergency alert broadcasted!', 'success');
+
+                // Force refresh and go to dashboard
+                await loadDashboardData();
+                showPage('dashboard');
             } catch (error) {
-                showToast('Error', error.message, 'error');
+                console.error(error);
+                showToast('Error', 'Failed to send alert: ' + error.message, 'error');
             }
-        }
-
-        // Load User Data from Firestore
-        async function loadUserData() {
-            try {
-                const user = window.auth.currentUser;
-                if (!user) return;
-
-                const contactsRef = window.collection(window.db, `users/${user.uid}/contacts`);
-                const snapshot = await window.getDocs(contactsRef);
-
-                appState.emergencyContacts = [];
-                snapshot.forEach(doc => {
-                    appState.emergencyContacts.push({ id: doc.id, ...doc.data() });
-                });
-
-                renderContacts();
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
-        }
-
-        // Geolocation
-        function fetchLocation() {
-            if (!navigator.geolocation) {
-                showToast('Error', 'Geolocation not supported', 'error');
-                return;
-            }
-
-            showToast('Fetching', 'Getting your location...', 'warning');
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    appState.currentLocation = { latitude, longitude };
-                    displayLocation(latitude, longitude);
-                    showToast('Success', 'Location fetched successfully', 'success');
-                },
-                (error) => {
-                    showToast('Error', 'Unable to fetch location', 'error');
-                }
-            );
-        }
-
-        function displayLocation(lat, lng) {
-            const html = `
-                <div class="location-info">
-                    <p><strong>Latitude:</strong> ${lat.toFixed(6)}</p>
-                    <p><strong>Longitude:</strong> ${lng.toFixed(6)}</p>
-                    <p style="color: var(--success); font-weight: 600; margin-top: 0.5rem;">✓ Location fetched</p>
-                </div>
-            `;
-            document.getElementById('currentLocation').innerHTML = html;
-        }
-
-        // SOS Emergency
-        async function triggerSOS() {
-            if (appState.sosActive) {
-                showToast('Alert', 'SOS already active!', 'warning');
-                return;
-            }
-
-            appState.sosActive = true;
-            const sosButton = document.getElementById('sosButton');
-            const sosStatus = document.getElementById('sosStatus');
-            const statusBadge = document.getElementById('statusBadge');
-            const locationDisplay = document.getElementById('locationDisplay');
-
-            sosButton.classList.add('active');
-            statusBadge.className = 'status-badge badge-alert';
-            statusBadge.textContent = 'ALERT SENT';
-            sosStatus.innerHTML = '<div class="spinner"></div><p>Activating emergency protocol...</p>';
-
-            showToast('SOS Activated', 'Emergency alert triggered!', 'error');
-
-            // Fetch location
-            if (!appState.currentLocation) {
-                await new Promise((resolve) => {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const { latitude, longitude } = position.coords;
-                            appState.currentLocation = { latitude, longitude };
-                            resolve();
-                        },
-                        () => {
-                            appState.currentLocation = { latitude: 0, longitude: 0 };
-                            resolve();
-                        }
-                    );
-                });
-            }
-
-            // Save to Firestore
-            try {
-                const user = window.auth.currentUser;
-                if (user) {
-                    await window.addDoc(window.collection(window.db, `users/${user.uid}/emergencies`), {
-                        location: appState.currentLocation,
-                        timestamp: window.serverTimestamp(),
-                        status: 'active'
-                    });
-                }
-            } catch (error) {
-                console.error('Error saving emergency:', error);
-            }
-
-            setTimeout(() => {
-                alertHelpCenters();
-                alertEmergencyContacts();
-
-                const { latitude, longitude } = appState.currentLocation;
-                locationDisplay.innerHTML = `
-                    <div class="location-info">
-                        <p><strong>📍 Your Location:</strong></p>
-                        <p><strong>Latitude:</strong> ${latitude.toFixed(6)}</p>
-                        <p><strong>Longitude:</strong> ${longitude.toFixed(6)}</p>
-                        <p style="color: var(--success); font-weight: 600; margin-top: 0.5rem;">✓ Location shared</p>
-                    </div>
-                `;
-                locationDisplay.classList.remove('hidden');
-
-                sosStatus.innerHTML = `
-                    <p style="color: var(--success); font-weight: 600;">✓ Alert sent successfully</p>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Help is on the way!</p>
-                `;
-
-                statusBadge.className = 'status-badge badge-waiting';
-                statusBadge.textContent = 'WAITING FOR HELP';
-
-                showToast('Help Contacted', 'Emergency services notified', 'success');
-            }, 2000);
-        }
-
-        function alertHelpCenters() {
-            appState.helpCenters.forEach((center, index) => {
-                setTimeout(() => {
-                    showToast('Help Center Alerted', `${center.name} notified`, 'success');
-                }, 1000 * (index + 1));
-            });
-        }
-
-        function alertEmergencyContacts() {
-            if (appState.emergencyContacts.length === 0) {
-                showToast('No Contacts', 'Add emergency contacts', 'warning');
-                return;
-            }
-
-            const { latitude, longitude } = appState.currentLocation;
-            const message = `I'm in danger. My location is: Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`;
-
-            appState.emergencyContacts.forEach((contact, index) => {
-                setTimeout(() => {
-                    showToast('Contact Alerted', `Message sent to ${contact.name}`, 'success');
-                }, 2000 + (500 * index));
-            });
-
-            document.getElementById('messagePreview').textContent = message;
         }
 
         function simulateHardwarePanic() {
-            showToast('Hardware Alert', 'Panic button pressed!', 'error');
-            setTimeout(() => triggerSOS(), 500);
+            showToast('Hardware', 'Simulating hardware button press...', 'warning');
+            setTimeout(simulateSOS, 1000);
         }
 
-        // Emergency Contacts
-        async function addContact(event) {
-            event.preventDefault();
+        // Create Floating Particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
 
-            const nameInput = document.getElementById('contactName');
-            const phoneInput = document.getElementById('contactPhone');
-
-            const name = nameInput.value.trim();
-            const phone = phoneInput.value.trim();
-
-            if (appState.emergencyContacts.length >= 3) {
-                showToast('Limit Reached', 'Maximum 3 contacts allowed', 'warning');
-                return;
-            }
-
-            try {
-                const user = window.auth.currentUser;
-                if (user) {
-                    const docRef = await window.addDoc(window.collection(window.db, `users/${user.uid}/contacts`), {
-                        name,
-                        phone,
-                        createdAt: window.serverTimestamp()
-                    });
-
-                    appState.emergencyContacts.push({ id: docRef.id, name, phone });
-                } else {
-                    // Local storage fallback
-                    appState.emergencyContacts.push({
-                        id: Date.now(),
-                        name,
-                        phone
-                    });
-                }
-
-                renderContacts();
-                nameInput.value = '';
-                phoneInput.value = '';
-                showToast('Contact Added', `${name} added`, 'success');
-            } catch (error) {
-                showToast('Error', error.message, 'error');
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
             }
         }
 
-        async function removeContact(id) {
-            try {
-                const user = window.auth.currentUser;
-                if (user) {
-                    await window.deleteDoc(window.doc(window.db, `users/${user.uid}/contacts`, id));
-                }
-
-                appState.emergencyContacts = appState.emergencyContacts.filter(c => c.id !== id);
-                renderContacts();
-                showToast('Contact Removed', 'Emergency contact removed', 'success');
-            } catch (error) {
-                showToast('Error', error.message, 'error');
-            }
-        }
-
-        function renderContacts() {
-            const contactList = document.getElementById('contactList');
-
-            if (appState.emergencyContacts.length === 0) {
-                contactList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No emergency contacts yet. Add up to 3 contacts.</p>';
-                return;
-            }
-
-            contactList.innerHTML = appState.emergencyContacts.map(contact => `
-                <div class="contact-item">
-                    <div class="contact-info">
-                        <div class="contact-avatar">👤</div>
-                        <div class="contact-details">
-                            <div class="contact-name">${contact.name}</div>
-                            <div class="contact-phone">📱 ${contact.phone}</div>
-                        </div>
-                    </div>
-                    <button class="btn-remove" onclick="removeContact('${contact.id}')">Remove</button>
-                </div>
-            `).join('');
-        }
-
-        function renderHelpCenters() {
-            const helpCenterList = document.getElementById('helpCenterList');
-
-            helpCenterList.innerHTML = appState.helpCenters.map(center => `
-                <div class="help-center-item">
-                    <div class="help-center-name">${center.name}</div>
-                    <div class="help-center-meta">
-                        <span>📍 ${center.type}</span>
-                        <span>📞 ${center.phone}</span>
-                        <span style="color: var(--success);">Distance: ${center.distance}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', initApp);
+        // Initialize particles on load
+        window.addEventListener('DOMContentLoaded', createParticles);
     </script>
 </body>
 

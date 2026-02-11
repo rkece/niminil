@@ -1,0 +1,37 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff3366;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="32" cy="32" r="30" fill="#0a0a0f" stroke="url(#shieldGradient)" stroke-width="2"/>
+  
+  <!-- Shield Shape -->
+  <path d="M32 12 L48 20 L48 32 C48 42 40 50 32 52 C24 50 16 42 16 32 L16 20 Z" 
+        fill="url(#shieldGradient)" 
+        filter="url(#glow)"
+        opacity="0.9"/>
+  
+  <!-- Inner Shield Detail -->
+  <path d="M32 18 L42 24 L42 32 C42 38 37 44 32 46 C27 44 22 38 22 32 L22 24 Z" 
+        fill="#0a0a0f" 
+        opacity="0.4"/>
+  
+  <!-- Letter G -->
+  <text x="32" y="40" 
+        font-family="'Space Grotesk', sans-serif" 
+        font-size="24" 
+        font-weight="800" 
+        fill="#ffffff" 
+        text-anchor="middle">G</text>
+</svg>
